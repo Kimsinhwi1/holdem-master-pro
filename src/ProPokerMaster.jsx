@@ -1451,8 +1451,42 @@ const HoldemMaster = () => {
     setTimeout(() => {
       const deck = shuffleDeck(createDeck());
       
-      // 🎯 학습 모드별 플레이어 구성
+      // 🎯 학습 모드별 플레이어 구성과 설정
       let players = [];
+      let playerPosition = 'Button'; // 기본 포지션
+      let dealerPos = 0;
+      let activePos = 3;
+      
+      // 모드별 특화 설정
+      switch (mode) {
+        case 'position':
+          // 포지션 학습: 매 게임마다 다른 포지션 경험
+          const positions = ['UTG', 'MP', 'CO', 'Button'];
+          const randomPos = Math.floor(Math.random() * positions.length);
+          playerPosition = positions[randomPos];
+          dealerPos = (3 - randomPos) % 4; // 플레이어 포지션에 맞게 딜러 조정
+          activePos = (randomPos + 1) % 4; // 플레이어 다음부터 액션 시작
+          break;
+          
+        case 'tournament':
+          // 토너먼트: 짧은 스택으로 시작 (15-25BB)
+          playerPosition = Math.random() > 0.5 ? 'Button' : 'UTG';
+          break;
+          
+        case 'multiway':
+          // 멀티웨이: 플레이어를 조기 포지션에 배치
+          playerPosition = 'UTG';
+          activePos = 0; // 플레이어부터 액션 시작
+          break;
+          
+        case 'bluffing':
+          // 블러프 학습: 늦은 포지션 (블러프 유리)
+          playerPosition = Math.random() > 0.5 ? 'CO' : 'Button';
+          break;
+          
+        default:
+          playerPosition = 'Button';
+      }
       
       if (mode === 'headsup') {
         // 헤즈업: 1대1 (플레이어 vs AI 1명)
@@ -1485,59 +1519,84 @@ const HoldemMaster = () => {
           }
         ];
       } else {
-        // 기본: 4명 (플레이어 + AI 3명)
+        // 4명 게임: 모드별 특화 설정 적용
+        const allPositions = ['UTG', 'MP', 'CO', 'Button'];
+        const allAIStyles = ['pro', 'aggressive', 'tight'];
+        const allAINames = ['AI Pro', 'AI Shark', 'AI Rock'];
+        
+        // 플레이어 포지션에 따른 배치 조정
+        const playerPosIndex = allPositions.indexOf(playerPosition);
+        
+        // 모드별 AI 행동 조정
+        let aiStyleOverrides = {};
+        if (mode === 'bluffing') {
+          aiStyleOverrides = { 0: 'aggressive', 1: 'loose', 2: 'balanced' };
+        } else if (mode === 'tournament') {
+          aiStyleOverrides = { 0: 'tight', 1: 'aggressive', 2: 'pro' };
+        } else if (mode === 'multiway') {
+          aiStyleOverrides = { 0: 'loose', 1: 'passive', 2: 'balanced' };
+        }
+        
+        // 모드별 칩 스택 조정
+        let stackMultiplier = 1;
+        if (mode === 'tournament') {
+          stackMultiplier = 0.6; // 짧은 스택 (15-25BB)
+        } else if (mode === 'multiway') {
+          stackMultiplier = 1.5; // 딥 스택
+        }
+        
         players = [
           {
             id: 0,
             name: playerNickname || (currentLanguage === 'ko' ? '플레이어' : 'Player'),
-            chips: playerStats.totalChips,
+            chips: Math.floor(playerStats.totalChips * stackMultiplier),
             cards: [deck[0], deck[1]],
-            position: 'Button',
+            position: playerPosition,
             isHuman: true,
             aiStyle: null,
             folded: false,
             allIn: false,
-            currentBet: 0,
-            lastAction: null
+            currentBet: playerPosIndex === 1 ? BLINDS.small : (playerPosIndex === 2 ? BLINDS.big : 0),
+            lastAction: playerPosIndex === 1 || playerPosIndex === 2 ? 'blind' : null
           },
           {
             id: 1,
-            name: 'AI Pro',
-            chips: Math.max(1000, aiChips.aiPro),
+            name: allAINames[0],
+            chips: Math.max(1000, Math.floor(aiChips.aiPro * stackMultiplier)),
             cards: [deck[2], deck[3]],
-            position: 'Small Blind',
+            position: allPositions[(playerPosIndex + 1) % 4],
             isHuman: false,
-            aiStyle: 'pro',
+            aiStyle: aiStyleOverrides[0] || allAIStyles[0],
             folded: false,
             allIn: false,
-            currentBet: BLINDS.small,
-            lastAction: 'blind'
+            currentBet: (playerPosIndex + 1) % 4 === 1 ? BLINDS.small : ((playerPosIndex + 1) % 4 === 2 ? BLINDS.big : 0),
+            lastAction: (playerPosIndex + 1) % 4 === 1 || (playerPosIndex + 1) % 4 === 2 ? 'blind' : null
           },
           {
             id: 2,
-            name: 'AI Shark',
-            chips: Math.max(1000, aiChips.aiShark),
+            name: allAINames[1],
+            chips: Math.max(1000, Math.floor(aiChips.aiShark * stackMultiplier)),
             cards: [deck[4], deck[5]],
-            position: 'Big Blind',
+            position: allPositions[(playerPosIndex + 2) % 4],
             isHuman: false,
-            aiStyle: 'aggressive',
+            aiStyle: aiStyleOverrides[1] || allAIStyles[1],
             folded: false,
             allIn: false,
-            currentBet: BLINDS.big,
-            lastAction: 'blind'
+            currentBet: (playerPosIndex + 2) % 4 === 1 ? BLINDS.small : ((playerPosIndex + 2) % 4 === 2 ? BLINDS.big : 0),
+            lastAction: (playerPosIndex + 2) % 4 === 1 || (playerPosIndex + 2) % 4 === 2 ? 'blind' : null
           },
           {
             id: 3,
-            name: 'AI Rock',
-            chips: Math.max(1000, aiChips.aiRock),
+            name: allAINames[2],
+            chips: Math.max(1000, Math.floor(aiChips.aiRock * stackMultiplier)),
             cards: [deck[6], deck[7]],
-            position: 'UTG',
+            position: allPositions[(playerPosIndex + 3) % 4],
             isHuman: false,
-            aiStyle: 'tight',
+            aiStyle: aiStyleOverrides[2] || allAIStyles[2],
             folded: false,
             allIn: false,
-            currentBet: 0,
-            lastAction: null
+            currentBet: (playerPosIndex + 3) % 4 === 1 ? BLINDS.small : ((playerPosIndex + 3) % 4 === 2 ? BLINDS.big : 0),
+            lastAction: (playerPosIndex + 3) % 4 === 1 || (playerPosIndex + 3) % 4 === 2 ? 'blind' : null
           }
         ];
       }
@@ -1548,9 +1607,14 @@ const HoldemMaster = () => {
         players[0].chips -= BLINDS.small;
         players[1].chips -= BLINDS.big;
       } else {
-        // 4인: AI Pro(SB), AI Shark(BB)
-        players[1].chips -= BLINDS.small;
-        players[2].chips -= BLINDS.big;
+        // 4인: 블라인드 포지션에 따라 차감
+        players.forEach(player => {
+          if (player.position === 'Small Blind' || (player.position.includes('MP') && player.currentBet === BLINDS.small)) {
+            player.chips -= BLINDS.small;
+          } else if (player.position === 'Big Blind' || (player.position.includes('CO') && player.currentBet === BLINDS.big)) {
+            player.chips -= BLINDS.big;
+          }
+        });
       }
 
       const initialGameState = {
@@ -1559,8 +1623,8 @@ const HoldemMaster = () => {
         pot: BLINDS.small + BLINDS.big,
         currentBet: BLINDS.big,
         gamePhase: 'preflop',
-        activePlayer: mode === 'headsup' ? 0 : 3, // 헤즈업: 플레이어(SB) 시작, 4인: UTG(AI Rock) 시작  
-        dealerPosition: mode === 'headsup' ? 0 : 0, // 헤즈업: 플레이어가 딜러/SB
+        activePlayer: mode === 'headsup' ? 0 : activePos, // 헤즈업: 플레이어(SB) 시작, 4인: 모드별 시작 포지션
+        dealerPosition: mode === 'headsup' ? 0 : dealerPos, // 헤즈업: 플레이어가 딜러/SB, 4인: 모드별 딜러 포지션
         deck: mode === 'headsup' ? deck.slice(4) : deck.slice(8), // 사용된 카드 수에 따라 조정
         round: 1,
         winners: null,
@@ -1576,12 +1640,16 @@ const HoldemMaster = () => {
       setActionInProgress(false);
       
       console.log('🎮 게임 초기화 완료', {
+        mode: mode,
         activePlayer: initialGameState.activePlayer,
-        playerName: players[3].name
+        playerPosition: playerPosition,
+        dealerPos: dealerPos,
+        players: players.map(p => ({ name: p.name, position: p.position, chips: p.chips }))
       });
       
       addToLog('🎯 새로운 학습 세션이 시작되었습니다!');
       addToLog(`📚 모드: ${LEARNING_MODES[mode]?.name}`);
+      addToLog(`🎯 당신의 포지션: ${playerPosition}`);
       addToLog(`💰 스몰/빅 블라인드: ${BLINDS.small}/${BLINDS.big}`);
       addToLog(`🔰 피드백 수준: ${FEEDBACK_LEVELS[feedbackLevel]?.name}`);
       
@@ -1597,9 +1665,10 @@ const HoldemMaster = () => {
         totalChips: prev.totalChips - Math.min(prev.totalChips, 1000)
       }));
 
-      // 🚀 첫 AI 액션 시작 (새로운 시스템)
+      // 🚀 첫 AI 액션 시작 (액티브 플레이어가 AI인 경우)
       setTimeout(() => {
-        if (players[3] && !players[3].isHuman) {
+        const activePlayerObj = players[initialGameState.activePlayer];
+        if (activePlayerObj && !activePlayerObj.isHuman) {
           const gameSnapshot = { ...initialGameState };
           processAIAction(gameSnapshot);
         }
