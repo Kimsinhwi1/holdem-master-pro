@@ -1182,6 +1182,16 @@ const HoldemMaster = () => {
     }
   });
   
+  // 🔄 자동 재시작 설정
+  const [autoRestart, setAutoRestart] = useState(false);
+  const [restartCountdown, setRestartCountdown] = useState(0);
+  
+  // 🤖 AI 칩 추적 (승리한 AI는 칩을 유지)
+  const [aiChips, setAiChips] = useState({
+    aiPro: 1000,
+    aiShark: 1000, 
+    aiRock: 1000
+  });
   
   // 학습 피드백 생성 함수
   const generateLearningFeedback = useCallback((action, gameStateSnapshot) => {
@@ -1318,6 +1328,29 @@ const HoldemMaster = () => {
     }
   }, [currentLanguage]);
 
+  // ⏱️ 자동 재시작 카운트다운 타이머
+  useEffect(() => {
+    if (restartCountdown > 0) {
+      addToLog(`🔄 ${restartCountdown}초 후 자동 재시작...`);
+      
+      const timer = setTimeout(() => {
+        setRestartCountdown(prev => {
+          if (prev <= 1) {
+            // 카운트다운 완료 - 새 게임 시작
+            addToLog('🔄 자동으로 새 게임을 시작합니다!');
+            setTimeout(() => {
+              initializeGame(selectedMode);
+            }, 500);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [restartCountdown, selectedMode]);
+
   // 👤 닉네임 저장 함수
   const saveNickname = useCallback((nickname) => {
     try {
@@ -1435,7 +1468,7 @@ const HoldemMaster = () => {
         {
           id: 1,
           name: 'AI Pro',
-          chips: 1000,
+          chips: Math.max(1000, aiChips.aiPro), // 최소 1000칩, 더 많으면 유지
           cards: [deck[2], deck[3]],
           position: 'Small Blind',
           isHuman: false,
@@ -1448,7 +1481,7 @@ const HoldemMaster = () => {
         {
           id: 2,
           name: 'AI Shark',
-          chips: 1000,
+          chips: Math.max(1000, aiChips.aiShark), // 최소 1000칩, 더 많으면 유지
           cards: [deck[4], deck[5]],
           position: 'Big Blind',
           isHuman: false,
@@ -1461,7 +1494,7 @@ const HoldemMaster = () => {
         {
           id: 3,
           name: 'AI Rock',
-          chips: 1000,
+          chips: Math.max(1000, aiChips.aiRock), // 최소 1000칩, 더 많으면 유지
           cards: [deck[6], deck[7]],
           position: 'UTG',
           isHuman: false,
@@ -2227,11 +2260,28 @@ const HoldemMaster = () => {
       showdown: true
     };
     
+    // 🤖 AI 칩 상태 업데이트 (승리한 AI는 칩 유지, 잃은 AI는 리셋)
+    const aiPlayers = newPlayers.filter(p => !p.isHuman);
+    const updatedAiChips = { ...aiChips };
+    
+    aiPlayers.forEach(aiPlayer => {
+      const aiKey = aiPlayer.name === 'AI Pro' ? 'aiPro' : 
+                   aiPlayer.name === 'AI Shark' ? 'aiShark' : 'aiRock';
+      updatedAiChips[aiKey] = aiPlayer.chips;
+    });
+    
+    setAiChips(updatedAiChips);
+    console.log('🤖 AI 칩 상태 업데이트:', updatedAiChips);
+
     setGameState(newGameState);
     setIsProcessingAction(false);
     setActionInProgress(false);
 
-    // 🚫 자동 새 게임 시작 제거 - 사용자가 원할 때만 시작
+    // 🔄 자동 재시작 로직
+    if (autoRestart) {
+      addToLog('🔄 자동 재시작이 활성화되어 있습니다...');
+      setRestartCountdown(5); // 5초 카운트다운 시작
+    }
     setTimeout(() => {
       addToLog('🎮 새 게임을 시작하려면 아래 버튼을 클릭하세요.');
     }, 3000);
@@ -2621,6 +2671,37 @@ const HoldemMaster = () => {
                 >
                   🔄 재시작
                 </button>
+                
+                {/* 자동 재시작 토글 */}
+                <button
+                  onClick={() => setAutoRestart(!autoRestart)}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    autoRestart 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'bg-gray-600 hover:bg-gray-700 text-white'
+                  }`}
+                >
+                  {autoRestart ? '🔄 자동재시작 ON' : '⏸️ 자동재시작 OFF'}
+                </button>
+                
+                {/* 카운트다운 표시 */}
+                {restartCountdown > 0 && (
+                  <div className="flex items-center gap-2">
+                    <div className="bg-orange-600 px-4 py-2 rounded-lg text-white font-bold animate-pulse">
+                      ⏱️ {restartCountdown}초 후 재시작
+                    </div>
+                    <button
+                      onClick={() => {
+                        setRestartCountdown(0);
+                        addToLog('🛑 자동 재시작이 취소되었습니다.');
+                      }}
+                      className="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-white font-bold transition-colors"
+                    >
+                      ❌ 취소
+                    </button>
+                  </div>
+                )}
+                
                 <div className={"flex items-center gap-2 px-3 py-1 rounded-full " + (LEARNING_MODES[selectedMode] ? LEARNING_MODES[selectedMode].color : 'bg-gray-500')}>
                   {LEARNING_MODES[selectedMode] && (
                     <div className="w-4 h-4">
