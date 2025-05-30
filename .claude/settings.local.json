@@ -22,7 +22,10 @@
       "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"커뮤니티|실시간|학습|피드백|수익|승률|핸드|칩|팟|베팅|폴드|체크|콜|레이즈|올인|취소|새로운|시작|종료|재시작|분석|진행|세션|점수|모드|팁|이론|빠른|액세스|랜덤|광고|시청|충전|닫기|계속|도전|축하|성과|메뉴|돌아가기|자세히|보기|선택|설정|언어|닉네임|통계|대시보드|보유|승리|연승|플레이|유튜브|자료|확인|최신|컨텐츠|기초|고급|전략|토너먼트|심리|텔|룰|랭킹|프로|기법|최적|전술\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
       "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 5 -B 5 \"당신의 턴|현재 베팅|학습 종료|재시작|실시간 분석|현재 핸드|승률|팟 오즈|학습 진행|이번 세션|학습 팁|빠른 이론 학습|랜덤 이론 보기|보유 칩|승리한 핸드|현재 연승|학습 점수|플레이한 핸드|포커 기초|고급 전략|토너먼트 전략|포커 심리와 텔|학습 시작|총 수익\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
       "Bash(find:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:holdem-master-pro.vercel.app)"
     ],
     "deny": []
   },
