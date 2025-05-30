@@ -67,12 +67,14 @@ const Player = ({
             player.lastAction === 'allin' ? 'bg-purple-100 text-purple-700' :
             'bg-blue-100 text-blue-700'
           }`}>
-            {LANGUAGES && LANGUAGES[currentLanguage]?.ui?.actions?.[player.lastAction] || 
-             (player.lastAction === 'allin' ? '올인' :
-              player.lastAction === 'fold' ? '폴드' :
-              player.lastAction === 'call' ? '콜' :
-              player.lastAction === 'raise' ? '레이즈' :
-              player.lastAction === 'check' ? '체크' : player.lastAction)}
+            {(LANGUAGES && LANGUAGES[currentLanguage]?.ui?.actions?.[player.lastAction]) || 
+             {
+               'allin': '올인',
+               'fold': '폴드', 
+               'call': '콜',
+               'raise': '레이즈',
+               'check': '체크'
+             }[player.lastAction] || player.lastAction}
           </div>
         </div>
       )}
