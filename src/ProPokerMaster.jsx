@@ -874,7 +874,7 @@ const LearningFeedback = ({ action, gameState, playerCards, communityCards, mode
 };
 
 // 베팅 컨트롤 컴포넌트
-const BettingControls = ({ player, gameState, onAction, mode }) => {
+const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, currentLanguage }) => {
   const [betAmount, setBetAmount] = useState(0);
   const [showBetSlider, setShowBetSlider] = useState(false);
 
@@ -2700,6 +2700,8 @@ const HoldemMaster = () => {
                   gameState={gameState}
                   onAction={handlePlayerAction}
                   mode={selectedMode}
+                  LANGUAGES={LANGUAGES}
+                  currentLanguage={currentLanguage}
                 />
               )}
             </div>
