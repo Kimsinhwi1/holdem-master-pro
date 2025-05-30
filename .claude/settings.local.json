@@ -25,7 +25,15 @@
       "Bash(npm run build:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "WebFetch(domain:holdem-master-pro.vercel.app)"
+      "WebFetch(domain:holdem-master-pro.vercel.app)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A 5 -B 5 \"(showdown|winner|gameEnd|endHand|determineWinner|handComplete)\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A 10 -B 5 \"endHand.*=\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A 20 \"const endHand\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A 30 \"const endHand\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -A 15 -B 5 \"쇼다운|showdown.*=\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n -B 5 -A 2 \"showdown\\(\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"AI.*chip|chip.*AI|updateAI|AI.*state\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"isHuman.*false|!isHuman\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)"
     ],
     "deny": []
   },
