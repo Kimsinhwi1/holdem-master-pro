@@ -3,16 +3,17 @@ import { Users, Brain, TrendingUp, Target, Settings, Play, BarChart3, Calculator
 import { findBestHand } from './utils/cardUtils.js';
 import Card from './components/Card.jsx';
 import Player from './components/Player.jsx';
+import AdSenseAd from './components/AdSenseAd.jsx';
 
-// 광고 배너 컴포넌트
-const AdBanner = () => (
-  <div className="w-full bg-gray-100 border border-gray-300 p-4 text-center">
-    <div className="text-gray-600 text-sm font-medium">
-      광고 배너 영역 - 실제 광고 코드로 교체하세요
-    </div>
-    <div className="text-xs text-gray-400 mt-1">
-      예: Google AdSense, 네이버 애드포스트 등
-    </div>
+// 광고 배너 컴포넌트 (AdSense)
+const AdBanner = ({ adSlot = "1234567890", className = "" }) => (
+  <div className={`w-full ${className}`}>
+    <AdSenseAd 
+      adSlot={adSlot}
+      adFormat="auto"
+      style={{ minHeight: '100px' }}
+      className="w-full"
+    />
   </div>
 );
 
@@ -2310,6 +2311,14 @@ const HoldemMaster = () => {
           <p className="text-emerald-300">{LANGUAGES[currentLanguage].ui.description}</p>
         </div>
 
+        {/* 상단 광고 배너 */}
+        <div className="mb-8">
+          <AdBanner 
+            adSlot="1111111111" 
+            className="bg-white/5 backdrop-blur-sm rounded-xl p-2"
+          />
+        </div>
+
         {/* 피드백 수준 설정 */}
         <div className="mb-8">
           <div className="text-center mb-4">
@@ -2425,6 +2434,14 @@ const HoldemMaster = () => {
             <div className="text-2xl font-bold">{playerStats.handsPlayed}</div>
             <div className="text-sm text-emerald-200">플레이한 핸드</div>
           </div>
+        </div>
+
+        {/* 중간 광고 배너 */}
+        <div className="mb-8">
+          <AdBanner 
+            adSlot="2222222222" 
+            className="bg-white/5 backdrop-blur-sm rounded-xl p-2"
+          />
         </div>
 
         {/* 유튜브 학습 자료 */}
@@ -2708,6 +2725,14 @@ const HoldemMaster = () => {
 
             {/* 사이드 패널 (기존과 동일) */}
             <div className="space-y-6">
+              
+              {/* 게임 사이드바 광고 */}
+              <div className="bg-white/5 backdrop-blur-md rounded-xl p-2">
+                <AdBanner 
+                  adSlot="3333333333" 
+                  className="w-full"
+                />
+              </div>
               {humanPlayer && (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-white">
                   <h3 className="font-bold mb-4 flex items-center gap-2">
