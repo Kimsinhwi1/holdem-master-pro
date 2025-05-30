@@ -1762,33 +1762,41 @@ const HoldemMaster = () => {
       p.chips > 0
     );
     
-    // 🔍 베팅 라운드 로직 개선
-    const needsToAct = activePlayers.filter(p => 
-      !p.allIn && 
-      p.chips > 0 && 
-      (p.currentBet < maxBet || (maxBet === 0 && (!p.lastAction || p.lastAction === null)))
+    // 🔍 베팅 라운드 로직 단순화
+    const playersCanAct = activePlayers.filter(p => 
+      !p.allIn && p.chips > 0
     );
     
-    // 추가 체크: maxBet가 0인 경우 모든 액티브 플레이어가 액션했는지 확인
-    const playersActedInThisRound = activePlayers.filter(p => 
-      p.allIn || p.chips === 0 || (p.lastAction && p.lastAction !== null)
+    // 모든 플레이어가 같은 금액을 베팅했는지 확인
+    const allBetsEqual = playersCanAct.every(p => p.currentBet === maxBet);
+    
+    // 모든 플레이어가 액션했는지 확인 (blind 제외)
+    const allPlayersActed = playersCanAct.every(p => 
+      p.lastAction && p.lastAction !== 'blind' && p.lastAction !== null
     );
     
-    const shouldContinueRound = needsToAct.length > 0 || 
-      (maxBet === 0 && playersActedInThisRound.length < activePlayers.length);
+    // 최소한 한 번의 액션 사이클이 완료되었는지 확인
+    const actionCycleComplete = activePlayers.filter(p => 
+      p.lastAction && p.lastAction !== 'blind'
+    ).length >= activePlayers.length;
+    
+    const shouldContinueRound = !allBetsEqual || !allPlayersActed || !actionCycleComplete;
     
     console.log('📊 베팅 상황 분석:', {
       activePlayers: activePlayers.length,
+      playersCanAct: playersCanAct.length,
       maxBet,
-      needsToAct: needsToAct.length,
-      playersActedInThisRound: playersActedInThisRound.length,
+      allBetsEqual,
+      allPlayersActed,
+      actionCycleComplete,
       shouldContinueRound,
       playerBets: currentGameState.players.map(p => ({ 
         name: p.name, 
         bet: p.currentBet, 
+        lastAction: p.lastAction,
         folded: p.folded, 
         allIn: p.allIn,
-        lastAction: p.lastAction
+        chips: p.chips
       }))
     });
 
