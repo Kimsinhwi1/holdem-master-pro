@@ -963,7 +963,7 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
           onClick={() => handleAction('fold')}
           className="bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
         >
-          {LANGUAGES[currentLanguage].ui.actions.fold}
+          {LANGUAGES?.[currentLanguage]?.ui?.actions?.fold || '폴드'}
         </button>
         
         {canCheck ? (
@@ -971,7 +971,7 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
             onClick={() => handleAction('check')}
             className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
           >
-            {LANGUAGES[currentLanguage].ui.actions.check}
+            {LANGUAGES?.[currentLanguage]?.ui?.actions?.check || '체크'}
           </button>
         ) : (
           <button
@@ -979,7 +979,7 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
             disabled={callAmount > player.chips}
             className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg disabled:transform-none"
           >
-            {LANGUAGES[currentLanguage].ui.actions.call} ${callAmount}
+            {LANGUAGES?.[currentLanguage]?.ui?.actions?.call || '콜'} ${callAmount}
           </button>
         )}
         
@@ -988,14 +988,14 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
           disabled={minRaise > maxBet}
           className="bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg disabled:transform-none"
         >
-          {showBetSlider ? LANGUAGES[currentLanguage].ui.cancel : LANGUAGES[currentLanguage].ui.actions.raise}
+          {showBetSlider ? (LANGUAGES?.[currentLanguage]?.ui?.cancel || '취소') : (LANGUAGES?.[currentLanguage]?.ui?.actions?.raise || '레이즈')}
         </button>
         
         <button
           onClick={() => handleAction('allin', player.chips)}
           className="bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
         >
-          {LANGUAGES[currentLanguage].ui.actions.allin}
+          {LANGUAGES?.[currentLanguage]?.ui?.actions?.allin || '올인'}
         </button>
       </div>
 
@@ -1005,7 +1005,7 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
           disabled={betAmount > maxBet}
           className="w-full mt-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg"
         >
-          ${betAmount.toLocaleString()} {LANGUAGES[currentLanguage].ui.bet}
+          ${betAmount.toLocaleString()} {LANGUAGES?.[currentLanguage]?.ui?.bet || '베팅'}
         </button>
       )}
 
@@ -1073,7 +1073,13 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
              player.lastAction === 'allin' ? 'bg-purple-100 text-purple-700' :
              'bg-blue-100 text-blue-700')
           }>
-            {LANGUAGES[currentLanguage].ui.actions[player.lastAction] || player.lastAction}
+            {LANGUAGES?.[currentLanguage]?.ui?.actions?.[player.lastAction] || {
+              'allin': '올인',
+              'fold': '폴드', 
+              'call': '콜',
+              'raise': '레이즈',
+              'check': '체크'
+            }[player.lastAction] || player.lastAction}
           </div>
         </div>
       )}
