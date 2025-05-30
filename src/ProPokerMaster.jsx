@@ -1451,63 +1451,107 @@ const HoldemMaster = () => {
     setTimeout(() => {
       const deck = shuffleDeck(createDeck());
       
-      const players = [
-        {
-          id: 0,
-          name: playerNickname || (currentLanguage === 'ko' ? '플레이어' : 'Player'),
-          chips: playerStats.totalChips,
-          cards: [deck[0], deck[1]],
-          position: 'Button',
-          isHuman: true,
-          aiStyle: null,
-          folded: false,
-          allIn: false,
-          currentBet: 0,
-          lastAction: null
-        },
-        {
-          id: 1,
-          name: 'AI Pro',
-          chips: Math.max(1000, aiChips.aiPro), // 최소 1000칩, 더 많으면 유지
-          cards: [deck[2], deck[3]],
-          position: 'Small Blind',
-          isHuman: false,
-          aiStyle: 'pro',
-          folded: false,
-          allIn: false,
-          currentBet: BLINDS.small,
-          lastAction: 'blind'
-        },
-        {
-          id: 2,
-          name: 'AI Shark',
-          chips: Math.max(1000, aiChips.aiShark), // 최소 1000칩, 더 많으면 유지
-          cards: [deck[4], deck[5]],
-          position: 'Big Blind',
-          isHuman: false,
-          aiStyle: 'aggressive',
-          folded: false,
-          allIn: false,
-          currentBet: BLINDS.big,
-          lastAction: 'blind'
-        },
-        {
-          id: 3,
-          name: 'AI Rock',
-          chips: Math.max(1000, aiChips.aiRock), // 최소 1000칩, 더 많으면 유지
-          cards: [deck[6], deck[7]],
-          position: 'UTG',
-          isHuman: false,
-          aiStyle: 'tight',
-          folded: false,
-          allIn: false,
-          currentBet: 0,
-          lastAction: null
-        }
-      ];
+      // 🎯 학습 모드별 플레이어 구성
+      let players = [];
+      
+      if (mode === 'headsup') {
+        // 헤즈업: 1대1 (플레이어 vs AI 1명)
+        players = [
+          {
+            id: 0,
+            name: playerNickname || (currentLanguage === 'ko' ? '플레이어' : 'Player'),
+            chips: playerStats.totalChips,
+            cards: [deck[0], deck[1]],
+            position: 'Button/Small Blind',
+            isHuman: true,
+            aiStyle: null,
+            folded: false,
+            allIn: false,
+            currentBet: BLINDS.small,
+            lastAction: 'blind'
+          },
+          {
+            id: 1,
+            name: 'AI Pro',
+            chips: Math.max(1000, aiChips.aiPro),
+            cards: [deck[2], deck[3]],
+            position: 'Big Blind',
+            isHuman: false,
+            aiStyle: 'pro',
+            folded: false,
+            allIn: false,
+            currentBet: BLINDS.big,
+            lastAction: 'blind'
+          }
+        ];
+      } else {
+        // 기본: 4명 (플레이어 + AI 3명)
+        players = [
+          {
+            id: 0,
+            name: playerNickname || (currentLanguage === 'ko' ? '플레이어' : 'Player'),
+            chips: playerStats.totalChips,
+            cards: [deck[0], deck[1]],
+            position: 'Button',
+            isHuman: true,
+            aiStyle: null,
+            folded: false,
+            allIn: false,
+            currentBet: 0,
+            lastAction: null
+          },
+          {
+            id: 1,
+            name: 'AI Pro',
+            chips: Math.max(1000, aiChips.aiPro),
+            cards: [deck[2], deck[3]],
+            position: 'Small Blind',
+            isHuman: false,
+            aiStyle: 'pro',
+            folded: false,
+            allIn: false,
+            currentBet: BLINDS.small,
+            lastAction: 'blind'
+          },
+          {
+            id: 2,
+            name: 'AI Shark',
+            chips: Math.max(1000, aiChips.aiShark),
+            cards: [deck[4], deck[5]],
+            position: 'Big Blind',
+            isHuman: false,
+            aiStyle: 'aggressive',
+            folded: false,
+            allIn: false,
+            currentBet: BLINDS.big,
+            lastAction: 'blind'
+          },
+          {
+            id: 3,
+            name: 'AI Rock',
+            chips: Math.max(1000, aiChips.aiRock),
+            cards: [deck[6], deck[7]],
+            position: 'UTG',
+            isHuman: false,
+            aiStyle: 'tight',
+            folded: false,
+            allIn: false,
+            currentBet: 0,
+            lastAction: null
+          }
+        ];
+      }
 
-      players[1].chips -= BLINDS.small;
-      players[2].chips -= BLINDS.big;
+      // 블라인드 차감 (이미 currentBet에 반영되어 있으므로 chips에서만 차감)
+      if (mode === 'headsup') {
+        // 헤즈업: 플레이어(SB), AI Pro(BB)
+        players[0].chips -= BLINDS.small;
+        players[1].chips -= BLINDS.big;
+      } else {
+        // 4인: AI Pro(SB), AI Shark(BB)
+        players[1].chips -= BLINDS.small;
+        players[2].chips -= BLINDS.big;
+      }
 
       const initialGameState = {
         players,
@@ -1515,9 +1559,9 @@ const HoldemMaster = () => {
         pot: BLINDS.small + BLINDS.big,
         currentBet: BLINDS.big,
         gamePhase: 'preflop',
-        activePlayer: 3, // UTG (AI Rock) 시작
-        dealerPosition: 0,
-        deck: deck.slice(8),
+        activePlayer: mode === 'headsup' ? 0 : 3, // 헤즈업: 플레이어(SB) 시작, 4인: UTG(AI Rock) 시작  
+        dealerPosition: mode === 'headsup' ? 0 : 0, // 헤즈업: 플레이어가 딜러/SB
+        deck: mode === 'headsup' ? deck.slice(4) : deck.slice(8), // 사용된 카드 수에 따라 조정
         round: 1,
         winners: null,
         showdown: false,
@@ -1795,33 +1839,38 @@ const HoldemMaster = () => {
       p.chips > 0
     );
     
-    // 🔍 베팅 라운드 로직 단순화
+    // 🔍 베팅 라운드 로직 완전히 재설계
     const playersCanAct = activePlayers.filter(p => 
       !p.allIn && p.chips > 0
     );
     
+    // 액션할 수 있는 플레이어가 1명 이하면 라운드 종료
+    if (playersCanAct.length <= 1) {
+      console.log('✅ 액션 가능한 플레이어가 1명 이하 - 라운드 종료');
+      moveToNextPhase(currentGameState);
+      return;
+    }
+    
     // 모든 플레이어가 같은 금액을 베팅했는지 확인
     const allBetsEqual = playersCanAct.every(p => p.currentBet === maxBet);
     
-    // 모든 플레이어가 액션했는지 확인 (blind 제외)
-    const allPlayersActed = playersCanAct.every(p => 
-      p.lastAction && p.lastAction !== 'blind' && p.lastAction !== null
+    // 모든 액션 가능한 플레이어가 실제 액션(blind 제외)을 했는지 확인
+    const playersWithRealAction = playersCanAct.filter(p => 
+      p.lastAction && p.lastAction !== 'blind'
     );
     
-    // 최소한 한 번의 액션 사이클이 완료되었는지 확인
-    const actionCycleComplete = activePlayers.filter(p => 
-      p.lastAction && p.lastAction !== 'blind'
-    ).length >= activePlayers.length;
+    // 베팅이 맞고 + 모든 플레이어가 액션했으면 라운드 종료
+    const shouldEndRound = allBetsEqual && (playersWithRealAction.length >= playersCanAct.length);
     
-    const shouldContinueRound = !allBetsEqual || !allPlayersActed || !actionCycleComplete;
+    const shouldContinueRound = !shouldEndRound;
     
     console.log('📊 베팅 상황 분석:', {
       activePlayers: activePlayers.length,
       playersCanAct: playersCanAct.length,
       maxBet,
       allBetsEqual,
-      allPlayersActed,
-      actionCycleComplete,
+      playersWithRealAction: playersWithRealAction.length,
+      shouldEndRound,
       shouldContinueRound,
       playerBets: currentGameState.players.map(p => ({ 
         name: p.name, 
@@ -1833,8 +1882,8 @@ const HoldemMaster = () => {
       }))
     });
 
-    // ✅ 베팅 라운드 완료: 모든 액션이 완료되고 베팅이 맞아야 함
-    if (!shouldContinueRound && playersNeedingAction.length === 0) {
+    // ✅ 베팅 라운드 완료 체크
+    if (!shouldContinueRound) {
       console.log('✅ 베팅 라운드 완료, 다음 단계로');
       moveToNextPhase(currentGameState);
       return;
