@@ -18,7 +18,7 @@ const Announcement = ({ LANGUAGES, currentLanguage }) => {
         ko: '새로운 학습 모드가 추가되었습니다! 포지션별 훈련, 블러프 연습, 토너먼트 시뮬레이션 등 다양한 학습 옵션을 체험해보세요.',
         en: 'New learning modes have been added! Experience various learning options including position training, bluff practice, and tournament simulation.'
       },
-      date: '2025-01-31',
+      date: '2025-05-30',
       isNew: true
     },
     {
@@ -32,7 +32,7 @@ const Announcement = ({ LANGUAGES, currentLanguage }) => {
         ko: '이제 헤즈업 모드에서 4명으로 시작해서 자연스럽게 1:1 상황이 만들어집니다. 실제 포커와 동일한 헤즈업 경험을 제공합니다.',
         en: 'Heads-up mode now starts with 4 players and naturally creates 1:1 situations. Provides the same heads-up experience as real poker.'
       },
-      date: '2025-01-31',
+      date: '2025-05-30',
       isNew: true
     },
     {
@@ -46,7 +46,7 @@ const Announcement = ({ LANGUAGES, currentLanguage }) => {
         ko: '칩 저장 시스템이 개선되어 새로고침 후에도 보유 칩이 유지됩니다. 시작 칩이 5000개로 증가하고, 광고 시청 보상이 2000개로 증가했습니다.',
         en: 'Chip saving system improved to maintain chips after refresh. Starting chips increased to 5000, and ad viewing rewards increased to 2000.'
       },
-      date: '2025-01-31',
+      date: '2025-05-30',
       isNew: false
     },
     {
@@ -60,8 +60,22 @@ const Announcement = ({ LANGUAGES, currentLanguage }) => {
         ko: '모바일 환경에서의 사용성이 개선되었습니다. 터치 인터페이스와 반응형 디자인이 최적화되어 더 편리하게 이용하실 수 있습니다.',
         en: 'Usability in mobile environments has been improved. Touch interface and responsive design have been optimized for more convenient use.'
       },
-      date: '2025-01-30',
+      date: '2025-05-30',
       isNew: false
+    },
+    {
+      id: 6,
+      type: 'info',
+      title: {
+        ko: '📱 발견된 문제 사항 해결중',
+        en: '📱 Resolving identified issues'
+      },
+      content: {
+        ko: '현재 배팅 시스템에 문제가 확인되어 개선중에 있습니다.',
+        en: 'A problem has been found in the current betting system and we are working on improvements.'
+      },
+      date: '2025-05-31',
+      isNew: true
     }
   ];
 
