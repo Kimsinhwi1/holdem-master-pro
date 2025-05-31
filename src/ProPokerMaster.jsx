@@ -13,8 +13,8 @@ import Announcement from './components/Announcement.jsx';
 import SEOHead from './components/SEOHead.jsx';
 import Navigation from './components/Navigation.jsx';
 import BlogSection from './components/BlogSection.jsx';
-import FAQ from './components/FAQ.jsx';
-// import PokerGlossary from './components/PokerGlossary.jsx';
+// import FAQ from './components/FAQ.jsx';
+import PokerGlossary from './components/PokerGlossary.jsx';
 
 // 🎯 임시 SEO Head 컴포넌트 (react-helmet-async 없이도 작동)
 const TempSEOHead = ({ title, description }) => {
@@ -3113,8 +3113,8 @@ const HoldemMaster = () => {
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
       {currentView === 'blog' && <BlogSection />}
-      {currentView === 'faq' && <FAQ />}
-      {currentView === 'glossary' && <TempPokerGlossary />}
+      {currentView === 'faq' && <TempFAQ />}
+      {currentView === 'glossary' && <PokerGlossary />}
       
       {/* 🚀 기존 팝업들 */}
       {showTheoryPopup && (
