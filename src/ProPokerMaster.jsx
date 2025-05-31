@@ -3112,7 +3112,7 @@ const HoldemMaster = () => {
       {currentView === 'menu' && renderMenuView()}
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
-      {currentView === 'blog' && <BlogSection />}
+      {currentView === 'blog' && <tmpBlogSection />}
       {currentView === 'faq' && <FAQ />}
       {currentView === 'glossary' && <PokerGlossary />}
       
