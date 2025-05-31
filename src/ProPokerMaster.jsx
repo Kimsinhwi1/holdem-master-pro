@@ -92,7 +92,7 @@ const RewardVideoAd = ({ onReward, onClose }) => (
   <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div className="bg-white rounded-xl p-6 max-w-md">
       <h3 className="text-lg font-bold mb-4">광고 시청으로 칩 충전</h3>
-      <p className="text-gray-600 mb-4">30초 광고를 시청하면 1000 칩을 받을 수 있습니다.</p>
+      <p className="text-gray-600 mb-4">30초 광고를 시청하면 2000 칩을 받을 수 있습니다.</p>
       <div className="bg-gray-200 h-40 rounded-lg flex items-center justify-center mb-4">
         <div className="text-gray-500">광고 영상 영역</div>
       </div>
@@ -1291,7 +1291,7 @@ const HoldemMaster = () => {
         learningScore: 0,
         mistakesMade: 0,
         goodDecisions: 0,
-        totalChips: 1000
+        totalChips: 5000
       };
     } catch (error) {
       console.warn('localStorage 읽기 실패:', error);
@@ -1303,7 +1303,7 @@ const HoldemMaster = () => {
         learningScore: 0,
         mistakesMade: 0,
         goodDecisions: 0,
-        totalChips: 1000
+        totalChips: 5000
       };
     }
   });
@@ -1661,8 +1661,8 @@ const HoldemMaster = () => {
       
       setPlayerStats(prev => ({ 
         ...prev, 
-        handsPlayed: prev.handsPlayed + 1,
-        totalChips: prev.totalChips - Math.min(prev.totalChips, 1000)
+        handsPlayed: prev.handsPlayed + 1
+        // totalChips는 게임 시작시 차감하지 않고, 게임 결과에 따라서만 변경
       }));
 
       // 🚀 첫 AI 액션 시작 (액티브 플레이어가 AI인 경우)
@@ -2421,10 +2421,10 @@ const HoldemMaster = () => {
   const handleRewardAd = () => {
     setPlayerStats(prev => ({
       ...prev,
-      totalChips: prev.totalChips + 1000
+      totalChips: prev.totalChips + 2000
     }));
     setShowRewardAd(false);
-    addToLog('💰 광고 시청으로 1000 칩을 받았습니다!');
+    addToLog('💰 광고 시청으로 2000 칩을 받았습니다!');
   };
 
   // 이론 화면
