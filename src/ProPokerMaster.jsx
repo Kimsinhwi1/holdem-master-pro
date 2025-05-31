@@ -3113,7 +3113,7 @@ const HoldemMaster = () => {
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
       {currentView === 'blog' && <tmpBlogSection />}
-      {currentView === 'faq' && <FAQ />}
+      {currentView === 'faq' && <tmpFAQ />}
       {currentView === 'glossary' && <PokerGlossary />}
       
       {/* 🚀 기존 팝업들 */}
