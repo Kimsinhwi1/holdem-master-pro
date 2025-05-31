@@ -100,6 +100,15 @@ export const AI_STYLES = {
     callRange: [32, 100], 
     foldThreshold: 27,
     description: '최고 수준의 정교한 플레이'
+  },
+  headsup_folder: {
+    name: '폴더',
+    color: 'bg-gray-400',
+    aggression: 0.0,
+    bluffFreq: 0.0,
+    callRange: [100, 100], // 절대 콜하지 않음
+    foldThreshold: 100, // 항상 폴드
+    description: '헤즈업 상황을 만들기 위해 항상 폴드하는 AI'
   }
 };
 
