@@ -1938,11 +1938,19 @@ const HoldemMaster = () => {
 
     // 🔍 베팅 라운드 완료 체크 (개선된 로직)
     const maxBet = Math.max(...currentGameState.players.map(p => p.folded ? 0 : p.currentBet));
-    const playersNeedingAction = activePlayers.filter(p => 
-      !p.allIn && 
-      p.currentBet < maxBet && 
-      p.chips > 0
-    );
+    
+    // 🎯 액션이 필요한 플레이어 판정 로직 개선
+    const playersNeedingAction = activePlayers.filter(p => {
+      if (p.allIn || p.chips === 0) return false;
+      
+      // 베팅 차이가 있으면 액션 필요 (콜/레이즈/폴드)
+      if (p.currentBet < maxBet) return true;
+      
+      // 포스트플롭에서 아직 액션하지 않은 플레이어 (lastAction이 null)
+      if (currentGameState.gamePhase !== 'preflop' && p.lastAction === null) return true;
+      
+      return false;
+    });
     
     // 🔍 베팅 라운드 로직 완전히 재설계
     const playersCanAct = activePlayers.filter(p => 
@@ -1962,21 +1970,32 @@ const HoldemMaster = () => {
     // 실제로 더 액션이 필요한 플레이어가 있는지 확인 (더 베팅해야 하는 플레이어)
     const playersNeedingMoreBets = playersCanAct.filter(p => p.currentBet < maxBet);
     
-    // 🚨 핵심 수정: 모든 액션 가능한 플레이어가 실제 액션을 했는지 확인
-    const playersWithRealAction = playersCanAct.filter(p => 
-      p.lastAction && p.lastAction !== 'blind'
-    );
+    // 🚨 핵심 수정: 현재 베팅 라운드에서 각 플레이어가 액션을 했는지 추적
+    // 베팅 라운드가 시작되면 모든 플레이어는 액션을 해야 함 (단, 블라인드는 이미 액션한 것으로 간주)
+    const isPreflop = currentGameState.gamePhase === 'preflop';
+    
+    // 이 베팅 라운드에서 아직 액션하지 않은 플레이어들 찾기
+    const playersNeedingAction = playersCanAct.filter(p => {
+      // 프리플롭: 블라인드는 이미 액션한 것으로 간주, 다른 플레이어는 액션 필요
+      if (isPreflop) {
+        // 블라인드 포지션이면 이미 액션한 것으로 간주
+        if (p.lastAction === 'blind') {
+          return false; // 블라인드는 액션 완료
+        }
+        // 블라인드가 아닌 플레이어는 액션이 필요
+        return !p.lastAction || p.lastAction === null;
+      } else {
+        // 포스트플롭: 모든 플레이어가 이 라운드에서 액션해야 함
+        // 라운드 시작 시 lastAction이 null로 리셋되므로, null이면 아직 액션하지 않음
+        return !p.lastAction || p.lastAction === null;
+      }
+    });
     
     // 🎯 개선된 베팅 라운드 완료 조건:
     // 1. 모든 베팅이 같고
     // 2. 더 베팅할 플레이어가 없고  
-    // 3. 모든 플레이어가 실제 액션을 했거나 프리플롭에서 블라인드만 있는 경우
-    const isPreflop = currentGameState.gamePhase === 'preflop';
-    const allPlayersActed = isPreflop ? 
-      playersWithRealAction.length >= (playersCanAct.length - 2) : // 프리플롭: 블라인드 제외하고 계산
-      playersWithRealAction.length >= playersCanAct.length; // 포스트플롭: 모든 플레이어 액션 필요
-    
-    const shouldEndRound = allBetsEqual && playersNeedingMoreBets.length === 0 && allPlayersActed;
+    // 3. 액션이 필요한 플레이어가 없음
+    const shouldEndRound = allBetsEqual && playersNeedingMoreBets.length === 0 && playersNeedingAction.length === 0;
     
     const shouldContinueRound = !shouldEndRound;
     
@@ -1987,8 +2006,7 @@ const HoldemMaster = () => {
       maxBet,
       allBetsEqual,
       playersNeedingMoreBets: playersNeedingMoreBets.length,
-      playersWithRealAction: playersWithRealAction.length,
-      allPlayersActed,
+      playersNeedingAction: playersNeedingAction.length,
       shouldEndRound,
       shouldContinueRound,
       playerBets: currentGameState.players.map(p => ({ 
@@ -1997,7 +2015,8 @@ const HoldemMaster = () => {
         lastAction: p.lastAction,
         folded: p.folded, 
         allIn: p.allIn,
-        chips: p.chips
+        chips: p.chips,
+        needsAction: playersNeedingAction.includes(p)
       }))
     });
 
@@ -2008,12 +2027,14 @@ const HoldemMaster = () => {
       return;
     }
 
-    // 🎯 다음 플레이어 찾기 (개선된 로직)
+    // 🎯 다음 플레이어 찾기 (개선된 로직: 액션이 필요한 플레이어 우선)
     let nextPlayerIndex = (currentGameState.activePlayer + 1) % currentGameState.players.length;
     let attempts = 0;
     
+    // 첫 번째 패스: 액션이 필요한 플레이어 중에서 찾기
     while (attempts < 4) {
       const nextPlayer = currentGameState.players[nextPlayerIndex];
+      const needsAction = playersNeedingAction.includes(nextPlayer);
       
       console.log(`🔍 플레이어 ${nextPlayerIndex} (${nextPlayer.name}) 체크:`, {
         folded: nextPlayer.folded,
@@ -2021,18 +2042,50 @@ const HoldemMaster = () => {
         currentBet: nextPlayer.currentBet,
         maxBet: maxBet,
         chips: nextPlayer.chips,
-        needsAction: !nextPlayer.folded && !nextPlayer.allIn && nextPlayer.currentBet < maxBet && nextPlayer.chips > 0
+        lastAction: nextPlayer.lastAction,
+        needsAction: needsAction,
+        canAct: !nextPlayer.folded && !nextPlayer.allIn && nextPlayer.chips > 0
       });
       
-      // 이 플레이어가 액션할 수 있는지 확인
-      if (!nextPlayer.folded && !nextPlayer.allIn && nextPlayer.currentBet < maxBet && nextPlayer.chips > 0) {
-        console.log(`✅ ${nextPlayer.name}이 다음 액션`);
+      // 이 플레이어가 액션할 수 있고, 액션이 필요한지 확인
+      if (!nextPlayer.folded && !nextPlayer.allIn && nextPlayer.chips > 0 && needsAction) {
+        console.log(`✅ ${nextPlayer.name}이 다음 액션 (액션 필요)`);
         
         const newGameState = { ...currentGameState, activePlayer: nextPlayerIndex };
         setGameState(newGameState);
 
         if (!nextPlayer.isHuman) {
           // 🚀 새로운 AI 시스템으로 즉시 처리
+          setTimeout(() => {
+            const gameSnapshot = { ...newGameState };
+            processAIAction(gameSnapshot);
+          }, 1500);
+        } else {
+          console.log('👤 인간 플레이어 차례, 액션 대기');
+          setIsProcessingAction(false);
+        }
+        return;
+      }
+      
+      nextPlayerIndex = (nextPlayerIndex + 1) % currentGameState.players.length;
+      attempts++;
+    }
+    
+    // 두 번째 패스: 베팅 차이가 있는 플레이어 찾기 (콜이 필요한 경우)
+    nextPlayerIndex = (currentGameState.activePlayer + 1) % currentGameState.players.length;
+    attempts = 0;
+    
+    while (attempts < 4) {
+      const nextPlayer = currentGameState.players[nextPlayerIndex];
+      
+      // 베팅 차이가 있어서 콜해야 하는 플레이어
+      if (!nextPlayer.folded && !nextPlayer.allIn && nextPlayer.currentBet < maxBet && nextPlayer.chips > 0) {
+        console.log(`✅ ${nextPlayer.name}이 다음 액션 (베팅 차이)`);
+        
+        const newGameState = { ...currentGameState, activePlayer: nextPlayerIndex };
+        setGameState(newGameState);
+
+        if (!nextPlayer.isHuman) {
           setTimeout(() => {
             const gameSnapshot = { ...newGameState };
             processAIAction(gameSnapshot);
@@ -2079,6 +2132,23 @@ const HoldemMaster = () => {
         isHuman: aiPlayer?.isHuman,
         folded: aiPlayer?.folded,
         allIn: aiPlayer?.allIn
+      });
+      setIsProcessingAction(false);
+      processNextAction(gameStateSnapshot);
+      return;
+    }
+    
+    // 🚫 중복 액션 방지: 이미 이 라운드에서 액션한 플레이어인지 확인
+    const isPreflop = gameStateSnapshot.gamePhase === 'preflop';
+    const hasAlreadyActed = isPreflop ? 
+      (aiPlayer.lastAction && aiPlayer.lastAction !== 'blind') : 
+      (aiPlayer.lastAction && aiPlayer.lastAction !== null);
+    
+    if (hasAlreadyActed && !isForced) {
+      console.log(`⚠️ ${aiPlayer.name}은 이미 이 라운드에서 액션함:`, {
+        lastAction: aiPlayer.lastAction,
+        gamePhase: gameStateSnapshot.gamePhase,
+        isForced: isForced
       });
       setIsProcessingAction(false);
       processNextAction(gameStateSnapshot);
