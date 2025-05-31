@@ -3105,6 +3105,7 @@ const HoldemMaster = () => {
       <Navigation
         currentView={currentView}
         onViewChange={setCurrentView}
+        onStartGame={(mode) => initializeGame(mode)} // ← 이 줄 추가
         isGameActive={currentView === 'game'}
       />
 
@@ -3112,7 +3113,7 @@ const HoldemMaster = () => {
       {currentView === 'menu' && renderMenuView()}
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
-      {currentView === 'blog' && <BlogSection />}
+      {currentView === 'blog' && <BlogSection onViewChange={setCurrentView} />}
       {currentView === 'faq' && <FAQ />}
       {currentView === 'glossary' && <PokerGlossary />}
       
