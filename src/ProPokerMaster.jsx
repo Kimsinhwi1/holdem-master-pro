@@ -3099,10 +3099,10 @@ const HoldemMaster = () => {
   return (
     <div className="w-full">
       {/* 🚀 SEO Head */}
-      <tempSEOHead {...pageData} />
+      <TempSEOHead {...pageData} />
       
       {/* 🚀 네비게이션 */}
-      <tempNavigation
+      <TempNavigation
         currentView={currentView}
         onViewChange={setCurrentView}
         isGameActive={currentView === 'game'}
@@ -3112,9 +3112,9 @@ const HoldemMaster = () => {
       {currentView === 'menu' && renderMenuView()}
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
-      {currentView === 'blog' && <tempBlogSection />}
-      {currentView === 'faq' && <tempFAQ />}
-      {currentView === 'glossary' && <tempPokerGlossary />}
+      {currentView === 'blog' && <TempBlogSection />}
+      {currentView === 'faq' && <TempFAQ />}
+      {currentView === 'glossary' && <TempPokerGlossary />}
       
       {/* 🚀 기존 팝업들 */}
       {showTheoryPopup && (
