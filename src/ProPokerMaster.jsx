@@ -3102,7 +3102,7 @@ const HoldemMaster = () => {
       <tmpSEOHead {...pageData} />
       
       {/* 🚀 네비게이션 */}
-      <Navigation
+      <tmpNavigation
         currentView={currentView}
         onViewChange={setCurrentView}
         isGameActive={currentView === 'game'}
