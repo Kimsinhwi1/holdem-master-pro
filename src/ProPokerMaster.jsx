@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { HelmetProvider } from 'react-helmet-async';
+// HelmetProvider 제거됨 - main.jsx에서 간소화
 import { Users, Brain, TrendingUp, Target, Settings, Play, BarChart3, Calculator, Eye, Zap, Trophy, Star, ChevronRight, ChevronLeft, BookOpen, PieChart, Clock, Award, Gift, HelpCircle, Database, Gamepad2, LineChart, Activity, Users2, Lightbulb, FileText, Video, MessageCircle, AlertTriangle, CheckCircle, XCircle, ArrowUp, ArrowDown, X, Menu, Tv, RefreshCw, GraduationCap, Coins, DollarSign, Book } from 'lucide-react';
 
 // 🎯 기존 imports 그대로 유지
@@ -10,11 +10,11 @@ import AdSenseAd from './components/AdSenseAd.jsx';
 import Announcement from './components/Announcement.jsx';
 
 // 🚀 새로운 SEO 컴포넌트들 (패키지 설치 후 주석 해제)
-import SEOHead from './components/SEOHead.jsx';
-import Navigation from './components/Navigation.jsx';
-import BlogSection from './components/BlogSection.jsx';
-import FAQ from './components/FAQ.jsx';
-import PokerGlossary from './components/PokerGlossary.jsx';
+// import SEOHead from './components/SEOHead.jsx';
+// import Navigation from './components/Navigation.jsx';
+// import BlogSection from './components/BlogSection.jsx';
+// import FAQ from './components/FAQ.jsx';
+// import PokerGlossary from './components/PokerGlossary.jsx';
 
 // 🎯 임시 SEO Head 컴포넌트 (react-helmet-async 없이도 작동)
 const TempSEOHead = ({ title, description }) => {
