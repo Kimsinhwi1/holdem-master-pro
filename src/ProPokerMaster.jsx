@@ -10,11 +10,11 @@ import AdSenseAd from './components/AdSenseAd.jsx';
 import Announcement from './components/Announcement.jsx';
 
 // 🚀 새로운 SEO 컴포넌트들 (패키지 설치 후 주석 해제)
-import SEOHead from './components/SEOHead.jsx';
-import Navigation from './components/Navigation.jsx';
-import BlogSection from './components/BlogSection.jsx';
-import FAQ from './components/FAQ.jsx';
-import PokerGlossary from './components/PokerGlossary.jsx';
+// import SEOHead from './components/SEOHead.jsx';
+// import Navigation from './components/Navigation.jsx';
+// import BlogSection from './components/BlogSection.jsx';
+// import FAQ from './components/FAQ.jsx';
+// import PokerGlossary from './components/PokerGlossary.jsx';
 
 // 🎯 임시 SEO Head 컴포넌트 (react-helmet-async 없이도 작동)
 const TempSEOHead = ({ title, description }) => {
@@ -3099,10 +3099,10 @@ const HoldemMaster = () => {
   return (
     <div className="w-full">
       {/* 🚀 SEO Head */}
-      <tmpSEOHead {...pageData} />
+      <tempSEOHead {...pageData} />
       
       {/* 🚀 네비게이션 */}
-      <tmpNavigation
+      <tempNavigation
         currentView={currentView}
         onViewChange={setCurrentView}
         isGameActive={currentView === 'game'}
@@ -3112,9 +3112,9 @@ const HoldemMaster = () => {
       {currentView === 'menu' && renderMenuView()}
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
-      {currentView === 'blog' && <tmpBlogSection />}
-      {currentView === 'faq' && <tmpFAQ />}
-      {currentView === 'glossary' && <tmpPokerGlossary />}
+      {currentView === 'blog' && <tempBlogSection />}
+      {currentView === 'faq' && <tempFAQ />}
+      {currentView === 'glossary' && <tempPokerGlossary />}
       
       {/* 🚀 기존 팝업들 */}
       {showTheoryPopup && (
