@@ -1,331 +1,324 @@
-// 🤖 고급 포커 AI 시스템 - 완전히 새로운 설계
+// Advanced AI Decision Making System for Poker
 
-import { calculateHandStrength } from '../utils/handAnalysis.js';
-import { findBestHand } from '../utils/cardUtils.js';
-
-// 프리플롭 핸드 레인지 (실제 포커 전략 기반)
-const PREFLOP_RANGES = {
-  premium: ['AA', 'KK', 'QQ', 'JJ', 'AKs', 'AKo'],
-  strong: ['TT', '99', 'AQs', 'AQo', 'AJs', 'AJo', 'KQs', 'KQo'],
-  playable: ['88', '77', '66', 'ATs', 'A9s', 'KJs', 'KTs', 'QJs', 'QTs', 'JTs', 'T9s'],
-  marginal: ['55', '44', '33', '22', 'A8s', 'A7s', 'A6s', 'A5s', 'A4s', 'A3s', 'A2s', 'K9s', 'Q9s'],
-  trash: [] // 나머지 모든 핸드
-};
-
-// AI 스타일별 특성 정의 (더 공격적으로 조정)
-const AI_PERSONALITIES = {
-  tight: {
-    name: '타이트',
-    preflopVPIP: 40, // AI Rock가 더 많이 플레이
-    aggression: 3.0, // 더 공격적
-    bluffFreq: 0.15, // 더 많은 블러프
-    description: '강한 핸드 위주의 보수적 스타일'
+// AI 스타일 정의
+const AI_STYLES = {
+  tight: { 
+    vpip: 0.18, pfr: 0.14, aggression: 0.35, bluffFreq: 0.15,
+    handThreshold: 70
   },
-  loose: {
-    name: '루즈',
-    preflopVPIP: 45, // 매우 많이 플레이
-    aggression: 2.0,
-    bluffFreq: 0.20,
-    description: '많은 핸드로 참여하는 적극적 스타일'
+  loose: { 
+    vpip: 0.45, pfr: 0.28, aggression: 0.55, bluffFreq: 0.4,
+    handThreshold: 35
   },
-  aggressive: {
-    name: '공격적',
-    preflopVPIP: 35,
-    aggression: 4.0, // 매우 공격적
-    bluffFreq: 0.30,
-    description: '자주 레이즈하고 압박하는 스타일'
+  aggressive: { 
+    vpip: 0.32, pfr: 0.25, aggression: 0.85, bluffFreq: 0.6,
+    handThreshold: 50
+  },
+  pro: { 
+    vpip: 0.25, pfr: 0.18, aggression: 0.65, bluffFreq: 0.35,
+    handThreshold: 60
   },
   passive: {
-    name: '수동적',
-    preflopVPIP: 30, // 더 많이 플레이
-    aggression: 1.2, // 덜 수동적
-    bluffFreq: 0.05,
-    description: '콜 위주의 소극적 스타일'
+    vpip: 0.30, pfr: 0.12, aggression: 0.25, bluffFreq: 0.15,
+    handThreshold: 65
   },
   balanced: {
-    name: '밸런스드',
-    preflopVPIP: 32, // 더 많이 플레이
-    aggression: 2.8, // 더 공격적
-    bluffFreq: 0.15,
-    description: '균형잡힌 플레이 스타일'
+    vpip: 0.28, pfr: 0.20, aggression: 0.50, bluffFreq: 0.30,
+    handThreshold: 55
   },
-  pro: {
-    name: '프로',
-    preflopVPIP: 30, // 더 많이 플레이
-    aggression: 3.2, // 더 공격적
-    bluffFreq: 0.22,
-    description: '최고 수준의 정교한 플레이'
+  headsup_folder: {
+    vpip: 0.0, pfr: 0.0, aggression: 0.0, bluffFreq: 0.0,
+    handThreshold: 100 // 항상 폴드
   }
 };
 
-// 핸드 강도 계산 (실제 포커 로직)
-const getHandStrength = (playerCards, communityCards) => {
-  if (!playerCards || playerCards.length !== 2) return 0;
+// 핸드 강도 평가
+function evaluateHandStrength(cards) {
+  if (!cards || cards.length < 2) return 0;
+  
+  const [card1, card2] = cards.sort((a, b) => b.value - a.value);
+  const isPair = card1.value === card2.value;
+  const isSuited = card1.suit === card2.suit;
+  const gap = card1.value - card2.value;
+  
+  let strength = 0;
+  
+  if (isPair) {
+    if (card1.value >= 14) strength = 100; // AA
+    else if (card1.value >= 13) strength = 95; // KK
+    else if (card1.value >= 12) strength = 90; // QQ
+    else if (card1.value >= 11) strength = 85; // JJ
+    else if (card1.value >= 10) strength = 75; // TT
+    else if (card1.value >= 9) strength = 65; // 99
+    else if (card1.value >= 8) strength = 55; // 88
+    else if (card1.value >= 7) strength = 45; // 77
+    else strength = 35; // 낮은 페어
+  } else {
+    // 높은 카드 조합
+    if (card1.value === 14) { // Ace
+      if (card2.value >= 13) strength = isSuited ? 88 : 82; // AK
+      else if (card2.value >= 12) strength = isSuited ? 78 : 70; // AQ
+      else if (card2.value >= 11) strength = isSuited ? 72 : 62; // AJ
+      else if (card2.value >= 10) strength = isSuited ? 65 : 55; // AT
+      else if (card2.value >= 9) strength = isSuited ? 58 : 48; // A9
+      else if (card2.value >= 8) strength = isSuited ? 52 : 42; // A8
+      else if (card2.value >= 7) strength = isSuited ? 48 : 38; // A7
+      else if (card2.value >= 6) strength = isSuited ? 45 : 35; // A6
+      else if (card2.value >= 5) strength = isSuited ? 42 : 32; // A5
+      else if (card2.value >= 4) strength = isSuited ? 40 : 30; // A4
+      else if (card2.value >= 3) strength = isSuited ? 38 : 28; // A3
+      else strength = isSuited ? 36 : 26; // A2
+    } else if (card1.value === 13) { // King
+      if (card2.value >= 12) strength = isSuited ? 68 : 58; // KQ
+      else if (card2.value >= 11) strength = isSuited ? 60 : 48; // KJ
+      else if (card2.value >= 10) strength = isSuited ? 55 : 42; // KT
+      else if (card2.value >= 9) strength = isSuited ? 50 : 35; // K9
+      else strength = isSuited ? 40 : 25;
+    } else if (card1.value === 12) { // Queen
+      if (card2.value >= 11) strength = isSuited ? 58 : 46; // QJ
+      else if (card2.value >= 10) strength = isSuited ? 52 : 38; // QT
+      else if (card2.value >= 9) strength = isSuited ? 48 : 32; // Q9
+      else strength = isSuited ? 35 : 20;
+    } else if (card1.value === 11) { // Jack
+      if (card2.value >= 10) strength = isSuited ? 50 : 36; // JT
+      else if (card2.value >= 9) strength = isSuited ? 45 : 30; // J9
+      else strength = isSuited ? 30 : 18;
+    } else if (card1.value >= 10) { // Ten or higher
+      if (card2.value >= 9) strength = isSuited ? 45 : 30;
+      else strength = isSuited ? 25 : 15;
+    } else {
+      // 낮은 카드들
+      if (isSuited && gap <= 4 && card2.value >= 6) {
+        strength = 35; // 스트레이트 가능성이 있는 수트카드
+      } else if (isSuited && gap <= 2) {
+        strength = 30; // 연결된 수트카드
+      } else if (gap <= 1 && card1.value >= 8) {
+        strength = 25; // 연결된 높은 카드
+      } else {
+        strength = 10; // 낮은 카드들
+      }
+    }
+  }
+  
+  return Math.max(0, Math.min(100, strength));
+}
+
+// 포스트플롭 핸드 강도 평가
+function evaluatePostflopHand(playerCards, communityCards) {
+  if (!playerCards || !communityCards || playerCards.length < 2) {
+    return { strength: 0, type: 'high_card' };
+  }
   
   const allCards = [...playerCards, ...communityCards];
   
-  if (communityCards.length === 0) {
-    // 프리플롭: 핸드 레인지 기반 평가
-    return getPreflopStrength(playerCards);
-  } else {
-    // 포스트플롭: 실제 핸드 강도 평가
-    const bestHand = findBestHand(allCards);
-    const handTypeStrengths = {
-      '로얄 플러시': 100, '스트레이트 플러시': 95, '포카드': 90, '풀하우스': 85,
-      '플러시': 80, '스트레이트': 75, '트리플': 70, '투페어': 65, '원페어': 60, '하이카드': 50
-    };
-    return handTypeStrengths[bestHand.type] || 50;
-  }
-};
-
-// 프리플롭 핸드 강도 계산 (더 관대하게)
-const getPreflopStrength = (cards) => {
-  const [card1, card2] = cards;
-  const handString = getHandString(card1, card2);
+  // 간단한 핸드 평가 (실제로는 더 복잡한 로직이 필요)
+  const suits = {};
+  const ranks = {};
   
-  console.log(`📋 핸드 분석: ${card1.rank}${card1.suit} ${card2.rank}${card2.suit} → ${handString}`);
-  
-  if (PREFLOP_RANGES.premium.includes(handString)) {
-    const strength = 85 + Math.random() * 15;
-    console.log(`💎 프리미엄 핸드! 강도: ${strength.toFixed(1)}`);
-    return strength;
-  }
-  if (PREFLOP_RANGES.strong.includes(handString)) {
-    const strength = 65 + Math.random() * 20; // 65-85
-    console.log(`💪 강한 핸드! 강도: ${strength.toFixed(1)}`);
-    return strength;
-  }
-  if (PREFLOP_RANGES.playable.includes(handString)) {
-    const strength = 45 + Math.random() * 25; // 45-70
-    console.log(`✅ 플레이 가능한 핸드! 강도: ${strength.toFixed(1)}`);
-    return strength;
-  }
-  if (PREFLOP_RANGES.marginal.includes(handString)) {
-    const strength = 25 + Math.random() * 25; // 25-50
-    console.log(`⚠️ 마지널 핸드! 강도: ${strength.toFixed(1)}`);
-    return strength;
-  }
-  
-  const strength = 10 + Math.random() * 25; // 10-35 (더 관대하게)
-  console.log(`❌ 약한 핸드! 강도: ${strength.toFixed(1)}`);
-  return strength;
-};
-
-// 핸드를 문자열로 변환
-const getHandString = (card1, card2) => {
-  const rank1 = card1.rank === 'T' ? '10' : card1.rank;
-  const rank2 = card2.rank === 'T' ? '10' : card2.rank;
-  
-  const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-  const val1 = ranks.indexOf(rank1);
-  const val2 = ranks.indexOf(rank2);
-  
-  const suited = card1.suit === card2.suit ? 's' : 'o';
-  
-  if (val1 === val2) {
-    return rank1 + rank2; // 페어
-  } else if (val1 > val2) {
-    return rank1 + rank2 + suited;
-  } else {
-    return rank2 + rank1 + suited;
-  }
-};
-
-// 🎯 메인 AI 결정 함수
-export const getAdvancedAIAction = (aiPlayer, gameState, communityCards) => {
-  try {
-    const personality = AI_PERSONALITIES[aiPlayer.aiStyle] || AI_PERSONALITIES.balanced;
-    const handStrength = getHandStrength(aiPlayer.cards, communityCards);
-    const position = getPosition(aiPlayer.id, gameState.players.length);
-    const potSize = gameState.pot;
-    const currentBet = gameState.currentBet || 0;
-    const toCall = Math.max(0, currentBet - aiPlayer.currentBet);
-    
-    console.log(`🤖 ${aiPlayer.name} AI 고급 분석:`, {
-      handStrength: handStrength.toFixed(1),
-      position,
-      personality: personality.name,
-      toCall,
-      potSize,
-      gamePhase: gameState.gamePhase
-    });
-    
-    // 올인 상황 체크
-    if (toCall >= aiPlayer.chips) {
-      return handStrength >= 65 ? { action: 'call', amount: aiPlayer.chips } : { action: 'fold', amount: 0 };
-    }
-    
-    // 게임 단계별 결정
-    if (gameState.gamePhase === 'preflop') {
-      return getPreflopAction(aiPlayer, handStrength, personality, toCall, position);
-    } else {
-      return getPostflopAction(aiPlayer, handStrength, personality, toCall, potSize, gameState);
-    }
-    
-  } catch (error) {
-    console.error('AI 결정 오류:', error);
-    return { action: 'fold', amount: 0 };
-  }
-};
-
-// 프리플롭 액션 결정 (더 공격적으로 수정)
-const getPreflopAction = (aiPlayer, handStrength, personality, toCall, position) => {
-  const random = Math.random() * 100;
-  
-  console.log(`🎯 ${aiPlayer.name} 프리플롭 결정:`, {
-    handStrength: handStrength.toFixed(1),
-    toCall,
-    personality: personality.name,
-    chips: aiPlayer.chips
+  allCards.forEach(card => {
+    suits[card.suit] = (suits[card.suit] || 0) + 1;
+    ranks[card.value] = (ranks[card.value] || 0) + 1;
   });
   
-  // 매우 강한 핸드 (80+) - 임계값 낮춤
-  if (handStrength >= 80) {
-    if (toCall === 0) {
-      return { action: 'raise', amount: Math.min(aiPlayer.chips, 50 + random * 30) };
-    } else {
-      return { action: 'call', amount: toCall };
-    }
-  }
+  const maxSuit = Math.max(...Object.values(suits));
+  const maxRank = Math.max(...Object.values(ranks));
+  const rankCounts = Object.values(ranks).sort((a, b) => b - a);
   
-  // 강한 핸드 (60-79) - 임계값 낮춤
-  if (handStrength >= 60) {
-    if (toCall === 0) {
-      return random < 80 ? 
-        { action: 'raise', amount: Math.min(aiPlayer.chips, 30 + random * 20) } : 
-        { action: 'check', amount: 0 };
-    } else {
-      return toCall <= aiPlayer.chips * 0.3 ? 
-        { action: 'call', amount: toCall } : 
-        { action: 'fold', amount: 0 };
-    }
-  }
+  let strength = 0;
+  let type = 'high_card';
   
-  // 플레이 가능한 핸드 (40-59) - 임계값 낮춤
-  if (handStrength >= 40) {
-    if (toCall === 0) {
-      return random < 50 ? 
-        { action: 'raise', amount: Math.min(aiPlayer.chips, 25 + random * 15) } : 
-        { action: 'check', amount: 0 };
+  // 페어 이상 체크
+  if (maxRank >= 4) {
+    strength = 90;
+    type = 'four_of_kind';
+  } else if (maxRank >= 3) {
+    if (rankCounts[1] >= 2) {
+      strength = 85;
+      type = 'full_house';
     } else {
-      return toCall <= aiPlayer.chips * 0.15 && random < 80 ? 
-        { action: 'call', amount: toCall } : 
-        { action: 'fold', amount: 0 };
+      strength = 70;
+      type = 'three_of_kind';
     }
-  }
-  
-  // 마지널 핸드 (20-39) - 임계값 더 낮춤
-  if (handStrength >= 20) {
-    if (toCall === 0) {
-      return random < 35 ? 
-        { action: 'raise', amount: Math.min(aiPlayer.chips, 20 + random * 10) } : 
-        { action: 'check', amount: 0 };
+  } else if (maxSuit >= 5) {
+    strength = 80;
+    type = 'flush';
+  } else if (rankCounts[0] >= 2 && rankCounts[1] >= 2) {
+    strength = 60;
+    type = 'two_pair';
+  } else if (maxRank >= 2) {
+    // 페어의 강도에 따라 구분
+    const pairValue = Object.keys(ranks).find(rank => ranks[rank] === 2);
+    if (pairValue >= 11) {
+      strength = 55; // 높은 페어
+      type = 'high_pair';
+    } else if (pairValue >= 8) {
+      strength = 45; // 중간 페어
+      type = 'middle_pair';
     } else {
-      return toCall <= 25 && random < 75 ? 
-        { action: 'call', amount: toCall } : 
-        { action: 'fold', amount: 0 };
+      strength = 35; // 낮은 페어
+      type = 'low_pair';
     }
-  }
-  
-  // 약한 핸드 (0-19)
-  if (toCall === 0) {
-    return random < 25 ? 
-      { action: 'raise', amount: Math.min(aiPlayer.chips, 15 + random * 10) } : 
-      { action: 'check', amount: 0 };
   } else {
-    // 블라인드에서는 더 자주 콜
-    return toCall <= 20 && random < 50 ? 
-      { action: 'call', amount: toCall } : 
-      { action: 'fold', amount: 0 };
+    // 하이카드
+    const highCard = Math.max(...allCards.map(c => c.value));
+    if (highCard >= 14) strength = 25;
+    else if (highCard >= 12) strength = 20;
+    else if (highCard >= 10) strength = 15;
+    else strength = 10;
+    type = 'high_card';
   }
-};
+  
+  return { strength, type };
+}
 
-// 포스트플롭 액션 결정
-const getPostflopAction = (aiPlayer, handStrength, personality, toCall, potSize, gameState) => {
-  const random = Math.random() * 100;
-  const potOdds = toCall / (potSize + toCall);
+// 팟 오즈 계산
+function calculatePotOdds(potSize, betSize) {
+  if (betSize <= 0) return 0;
+  return betSize / (potSize + betSize);
+}
+
+// 고급 AI 결정 함수
+export function getAdvancedAIAction(player, gameState, communityCards) {
+  const style = AI_STYLES[player.aiStyle] || AI_STYLES.balanced;
   
-  // 매우 강한 핸드 (80+)
-  if (handStrength >= 80) {
-    if (toCall === 0) {
-      const betSize = Math.min(aiPlayer.chips, potSize * (0.6 + random * 0.4));
-      return { action: 'raise', amount: betSize };
-    } else {
-      return toCall <= aiPlayer.chips * 0.4 ? 
-        { action: 'raise', amount: Math.min(aiPlayer.chips, toCall * 2.5) } : 
-        { action: 'call', amount: toCall };
-    }
-  }
-  
-  // 강한 핸드 (65-79)
-  if (handStrength >= 65) {
-    if (toCall === 0) {
-      return random < 75 ? 
-        { action: 'raise', amount: Math.min(aiPlayer.chips, potSize * (0.4 + random * 0.3)) } : 
-        { action: 'check', amount: 0 };
-    } else {
-      return toCall <= aiPlayer.chips * 0.25 ? 
-        { action: 'call', amount: toCall } : 
-        { action: 'fold', amount: 0 };
-    }
-  }
-  
-  // 중간 핸드 (45-64)
-  if (handStrength >= 45) {
-    if (toCall === 0) {
-      return random < 25 ? 
-        { action: 'raise', amount: Math.min(aiPlayer.chips, potSize * (0.3 + random * 0.2)) } : 
-        { action: 'check', amount: 0 };
-    } else {
-      return toCall <= aiPlayer.chips * 0.15 && potOdds < 0.3 ? 
-        { action: 'call', amount: toCall } : 
-        { action: 'fold', amount: 0 };
-    }
-  }
-  
-  // 약한 핸드 / 블러프
-  if (toCall === 0) {
-    return random < personality.bluffFreq * 100 ? 
-      { action: 'raise', amount: Math.min(aiPlayer.chips, potSize * (0.5 + random * 0.3)) } : 
-      { action: 'check', amount: 0 };
-  } else {
+  // 헤즈업 폴더 AI는 항상 폴드
+  if (player.aiStyle === 'headsup_folder') {
     return { action: 'fold', amount: 0 };
   }
-};
-
-// 포지션 계산
-const getPosition = (playerId, totalPlayers) => {
-  const positions = ['BTN', 'SB', 'BB', 'UTG', 'MP', 'CO'];
-  return positions[playerId] || 'MP';
-};
-
-// 학습 피드백 생성
-export const getSmartFeedback = (playerAction, aiAction, handStrength, gameState) => {
-  const feedback = [];
   
-  if (gameState.gamePhase === 'preflop') {
-    if (handStrength >= 85 && playerAction === 'fold') {
-      feedback.push('💪 프리미엄 핸드를 폴드했습니다. AA, KK, QQ, JJ, AK는 거의 항상 플레이해야 합니다!');
+  const callAmount = Math.max(0, gameState.currentBet - player.currentBet);
+  const potOdds = calculatePotOdds(gameState.pot, callAmount);
+  const isPreflop = gameState.gamePhase === 'preflop';
+  
+  // 프리플롭 결정
+  if (isPreflop) {
+    const handStrength = evaluateHandStrength(player.cards);
+    
+    console.log(`🤖 ${player.name} 프리플롭 분석:`, {
+      handStrength,
+      threshold: style.handThreshold,
+      callAmount,
+      chips: player.chips
+    });
+    
+    // 너무 약한 핸드는 폴드
+    if (handStrength < style.handThreshold) {
+      return { action: 'fold', amount: 0 };
     }
     
-    if (handStrength < 30 && playerAction === 'raise') {
-      feedback.push('🎭 약한 핸드로 레이즈했습니다. 블러프는 좋지만 타이밍이 중요해요!');
+    // 매우 강한 핸드는 레이즈
+    if (handStrength >= 85) {
+      const raiseSize = Math.min(
+        gameState.currentBet + Math.max(20, Math.floor(gameState.pot * 0.8)),
+        player.chips + player.currentBet
+      );
+      return { action: 'raise', amount: raiseSize };
+    }
+    
+    // 강한 핸드는 레이즈 또는 콜
+    if (handStrength >= 70) {
+      if (Math.random() < style.pfr) {
+        const raiseSize = Math.min(
+          gameState.currentBet + Math.max(20, Math.floor(gameState.pot * 0.6)),
+          player.chips + player.currentBet
+        );
+        return { action: 'raise', amount: raiseSize };
+      } else {
+        if (callAmount === 0) {
+          return { action: 'check', amount: 0 };
+        } else if (callAmount <= player.chips) {
+          return { action: 'call', amount: callAmount };
+        }
+      }
+    }
+    
+    // 괜찮은 핸드는 콜
+    if (handStrength >= style.handThreshold) {
+      if (callAmount === 0) {
+        return { action: 'check', amount: 0 };
+      } else if (callAmount <= player.chips * 0.2) {
+        return { action: 'call', amount: callAmount };
+      }
+    }
+    
+    return { action: 'fold', amount: 0 };
+  }
+  
+  // 포스트플롭 결정
+  const postflopHand = evaluatePostflopHand(player.cards, communityCards);
+  
+  console.log(`🤖 ${player.name} 포스트플롭 분석:`, {
+    handStrength: postflopHand.strength,
+    handType: postflopHand.type,
+    callAmount,
+    potOdds: (potOdds * 100).toFixed(1) + '%'
+  });
+  
+  // 매우 강한 핸드
+  if (postflopHand.strength >= 80) {
+    if (callAmount === 0) {
+      const betSize = Math.min(
+        Math.floor(gameState.pot * 0.7),
+        player.chips + player.currentBet
+      );
+      return { action: 'raise', amount: betSize };
+    } else {
+      return { action: 'call', amount: Math.min(callAmount, player.chips) };
     }
   }
   
-  if (playerAction !== aiAction.action) {
-    feedback.push(`🤖 AI는 ${getActionName(aiAction.action)}을 추천했습니다. 당신의 선택과 비교해보세요!`);
+  // 강한 핸드
+  if (postflopHand.strength >= 60) {
+    if (callAmount === 0) {
+      if (Math.random() < 0.7) {
+        const betSize = Math.min(
+          Math.floor(gameState.pot * 0.5),
+          player.chips + player.currentBet
+        );
+        return { action: 'raise', amount: betSize };
+      } else {
+        return { action: 'check', amount: 0 };
+      }
+    } else if (callAmount <= gameState.pot * 0.5) {
+      return { action: 'call', amount: Math.min(callAmount, player.chips) };
+    } else if (Math.random() < style.aggression * 0.5) {
+      const raiseSize = Math.min(
+        gameState.currentBet + Math.floor(gameState.pot * 0.6),
+        player.chips + player.currentBet
+      );
+      return { action: 'raise', amount: raiseSize };
+    }
   }
   
-  return feedback;
-};
-
-const getActionName = (action) => {
-  const names = {
-    'fold': '폴드',
-    'check': '체크',
-    'call': '콜',
-    'raise': '레이즈'
-  };
-  return names[action] || action;
-};
+  // 중간 핸드
+  if (postflopHand.strength >= 30) {
+    if (callAmount === 0) {
+      if (Math.random() < 0.3) {
+        const betSize = Math.min(
+          Math.floor(gameState.pot * 0.3),
+          player.chips + player.currentBet
+        );
+        return { action: 'raise', amount: betSize };
+      } else {
+        return { action: 'check', amount: 0 };
+      }
+    } else if (callAmount <= gameState.pot * 0.3) {
+      return { action: 'call', amount: Math.min(callAmount, player.chips) };
+    }
+  }
+  
+  // 약한 핸드 - 블러프 고려
+  if (callAmount === 0) {
+    if (Math.random() < style.bluffFreq * 0.3) {
+      const betSize = Math.min(
+        Math.floor(gameState.pot * 0.4),
+        player.chips + player.currentBet
+      );
+      return { action: 'raise', amount: betSize };
+    }
+    return { action: 'check', amount: 0 };
+  }
+  
+  // 기본적으로 폴드
+  return { action: 'fold', amount: 0 };
+}
