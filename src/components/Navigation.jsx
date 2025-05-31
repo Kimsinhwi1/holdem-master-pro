@@ -71,6 +71,14 @@ const Navigation = ({
       return;
     }
     
+    // 게임 플레이 클릭 시 기본 모드로 게임 시작
+    if (item.id === 'game' && onStartGame) {
+      onStartGame('probability'); // 기본 모드
+      setIsOpen(false);
+      setShowLearningDropdown(false);
+      return;
+    }
+    
     setIsOpen(false);
     setShowLearningDropdown(false);
     onViewChange(view);
