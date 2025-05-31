@@ -1923,13 +1923,16 @@ const HoldemMaster = () => {
     // 모든 플레이어가 같은 금액을 베팅했는지 확인
     const allBetsEqual = playersCanAct.every(p => p.currentBet === maxBet);
     
+    // 실제로 더 액션이 필요한 플레이어가 있는지 확인 (더 베팅해야 하는 플레이어)
+    const playersNeedingMoreBets = playersCanAct.filter(p => p.currentBet < maxBet);
+    
     // 모든 액션 가능한 플레이어가 실제 액션(blind 제외)을 했는지 확인
     const playersWithRealAction = playersCanAct.filter(p => 
       p.lastAction && p.lastAction !== 'blind'
     );
     
-    // 베팅이 맞고 + 모든 플레이어가 액션했으면 라운드 종료
-    const shouldEndRound = allBetsEqual && (playersWithRealAction.length >= playersCanAct.length);
+    // 베팅이 맞고 + 더 베팅할 플레이어가 없으면 라운드 종료
+    const shouldEndRound = allBetsEqual && playersNeedingMoreBets.length === 0;
     
     const shouldContinueRound = !shouldEndRound;
     
@@ -1938,6 +1941,7 @@ const HoldemMaster = () => {
       playersCanAct: playersCanAct.length,
       maxBet,
       allBetsEqual,
+      playersNeedingMoreBets: playersNeedingMoreBets.length,
       playersWithRealAction: playersWithRealAction.length,
       shouldEndRound,
       shouldContinueRound,
