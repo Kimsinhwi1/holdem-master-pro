@@ -5,12 +5,21 @@ export const getAIAction = (handStrength, gameStage, pot, currentBet, aiPersonal
   const style = AI_STYLES[aiPersonality];
   const random = Math.random();
   
+  console.log(`AI 분석: 핸드강도=${handStrength}, 게임스테이지=${gameStage}, 현재베팅=${currentBet}, 스타일=${aiPersonality}`);
+  
+  // 헤즈업 폴더 AI는 무조건 폴드 (블라인드가 아닌 경우)
+  if (aiPersonality === 'headsup_folder') {
+    if (currentBet === 0 || currentBet === computerBet) {
+      return 'check'; // 베팅이 없으면 체크
+    } else {
+      return 'fold'; // 베팅이 있으면 무조건 폴드
+    }
+  }
+  
   // 프리플롭에서는 더 관대하게 플레이
   const isPreflop = gameStage === 'preflop';
   const adjustedFoldThreshold = isPreflop ? style.foldThreshold - 10 : style.foldThreshold;
   const adjustedCallRange = isPreflop ? style.callRange[0] - 10 : style.callRange[0];
-  
-  console.log(`AI 분석: 핸드강도=${handStrength}, 게임스테이지=${gameStage}, 현재베팅=${currentBet}, 스타일=${aiPersonality}`);
   
   // 매우 강한 핸드 (70% 이상)
   if (handStrength >= 70) {
