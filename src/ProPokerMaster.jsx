@@ -1962,23 +1962,33 @@ const HoldemMaster = () => {
     // 실제로 더 액션이 필요한 플레이어가 있는지 확인 (더 베팅해야 하는 플레이어)
     const playersNeedingMoreBets = playersCanAct.filter(p => p.currentBet < maxBet);
     
-    // 모든 액션 가능한 플레이어가 실제 액션(blind 제외)을 했는지 확인
+    // 🚨 핵심 수정: 모든 액션 가능한 플레이어가 실제 액션을 했는지 확인
     const playersWithRealAction = playersCanAct.filter(p => 
       p.lastAction && p.lastAction !== 'blind'
     );
     
-    // 베팅이 맞고 + 더 베팅할 플레이어가 없으면 라운드 종료
-    const shouldEndRound = allBetsEqual && playersNeedingMoreBets.length === 0;
+    // 🎯 개선된 베팅 라운드 완료 조건:
+    // 1. 모든 베팅이 같고
+    // 2. 더 베팅할 플레이어가 없고  
+    // 3. 모든 플레이어가 실제 액션을 했거나 프리플롭에서 블라인드만 있는 경우
+    const isPreflop = currentGameState.gamePhase === 'preflop';
+    const allPlayersActed = isPreflop ? 
+      playersWithRealAction.length >= (playersCanAct.length - 2) : // 프리플롭: 블라인드 제외하고 계산
+      playersWithRealAction.length >= playersCanAct.length; // 포스트플롭: 모든 플레이어 액션 필요
+    
+    const shouldEndRound = allBetsEqual && playersNeedingMoreBets.length === 0 && allPlayersActed;
     
     const shouldContinueRound = !shouldEndRound;
     
     console.log('📊 베팅 상황 분석:', {
+      gamePhase: currentGameState.gamePhase,
       activePlayers: activePlayers.length,
       playersCanAct: playersCanAct.length,
       maxBet,
       allBetsEqual,
       playersNeedingMoreBets: playersNeedingMoreBets.length,
       playersWithRealAction: playersWithRealAction.length,
+      allPlayersActed,
       shouldEndRound,
       shouldContinueRound,
       playerBets: currentGameState.players.map(p => ({ 
@@ -2302,13 +2312,34 @@ const HoldemMaster = () => {
       return;
     }
 
-    // SB부터 시작 (일반적인 포스트플롭 순서)
-    let firstActiveIndex = 1;
-    while (firstActiveIndex < resetPlayers.length && (resetPlayers[firstActiveIndex].folded || resetPlayers[firstActiveIndex].allIn)) {
-      firstActiveIndex++;
+    // 🎯 수정된 첫 액션 플레이어 결정 로직
+    // 포스트플롭에서는 SB부터 시작하는 것이 맞지만, 실제 SB 포지션을 찾아야 함
+    let firstActiveIndex;
+    
+    // Small Blind 포지션 찾기
+    const smallBlindIndex = resetPlayers.findIndex(p => 
+      p.position === 'Small Blind' || p.position.includes('SB')
+    );
+    
+    if (smallBlindIndex >= 0 && !resetPlayers[smallBlindIndex].folded && !resetPlayers[smallBlindIndex].allIn) {
+      firstActiveIndex = smallBlindIndex;
+    } else {
+      // SB가 없거나 폴드/올인한 경우, 다음 액티브 플레이어 찾기
+      const dealerIndex = currentGameState.dealerPosition || 0;
+      firstActiveIndex = (dealerIndex + 1) % resetPlayers.length; // SB 위치부터 시작
+      
+      // 액티브 플레이어 찾을 때까지 순환
+      let attempts = 0;
+      while (attempts < resetPlayers.length && 
+             (resetPlayers[firstActiveIndex].folded || resetPlayers[firstActiveIndex].allIn)) {
+        firstActiveIndex = (firstActiveIndex + 1) % resetPlayers.length;
+        attempts++;
+      }
     }
 
-    if (firstActiveIndex >= resetPlayers.length) {
+    // 모든 플레이어가 폴드/올인한 경우 쇼다운
+    if (firstActiveIndex >= resetPlayers.length || 
+        resetPlayers.every(p => p.folded || p.allIn)) {
       showdown({ ...currentGameState, players: resetPlayers, communityCards: newCommunityCards });
       return;
     }
