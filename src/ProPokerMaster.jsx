@@ -1489,33 +1489,63 @@ const HoldemMaster = () => {
       }
       
       if (mode === 'headsup') {
-        // 헤즈업: 1대1 (플레이어 vs AI 1명)
+        // 진짜 헤즈업: 4명으로 시작해서 AI들이 폴드하여 헤즈업 상황 만들기
+        playerPosition = 'Button'; // 플레이어를 유리한 포지션에 배치
+        dealerPos = 0;
+        activePos = 1; // SB부터 시작
+        
         players = [
           {
             id: 0,
             name: playerNickname || (currentLanguage === 'ko' ? '플레이어' : 'Player'),
-            chips: playerStats.totalChips,
+            chips: Math.floor(playerStats.totalChips * 1.0),
             cards: [deck[0], deck[1]],
-            position: 'Button/Small Blind',
+            position: 'Button',
             isHuman: true,
             aiStyle: null,
+            folded: false,
+            allIn: false,
+            currentBet: 0,
+            lastAction: null
+          },
+          {
+            id: 1,
+            name: 'AI Folder 1',
+            chips: Math.max(1000, Math.floor(aiChips.aiPro * 1.0)),
+            cards: [deck[2], deck[3]],
+            position: 'Small Blind',
+            isHuman: false,
+            aiStyle: 'headsup_folder', // 특별한 AI 스타일 - 항상 폴드
             folded: false,
             allIn: false,
             currentBet: BLINDS.small,
             lastAction: 'blind'
           },
           {
-            id: 1,
-            name: 'AI Pro',
-            chips: Math.max(1000, aiChips.aiPro),
-            cards: [deck[2], deck[3]],
+            id: 2,
+            name: 'AI Folder 2',
+            chips: Math.max(1000, Math.floor(aiChips.aiShark * 1.0)),
+            cards: [deck[4], deck[5]],
             position: 'Big Blind',
             isHuman: false,
-            aiStyle: 'pro',
+            aiStyle: 'headsup_folder', // 특별한 AI 스타일 - 항상 폴드
             folded: false,
             allIn: false,
             currentBet: BLINDS.big,
             lastAction: 'blind'
+          },
+          {
+            id: 3,
+            name: 'AI Pro',
+            chips: Math.max(1000, Math.floor(aiChips.aiRock * 1.0)),
+            cards: [deck[6], deck[7]],
+            position: 'UTG',
+            isHuman: false,
+            aiStyle: 'pro',
+            folded: false,
+            allIn: false,
+            currentBet: 0,
+            lastAction: null
           }
         ];
       } else {
@@ -1603,9 +1633,14 @@ const HoldemMaster = () => {
 
       // 블라인드 차감 (이미 currentBet에 반영되어 있으므로 chips에서만 차감)
       if (mode === 'headsup') {
-        // 헤즈업: 플레이어(SB), AI Pro(BB)
-        players[0].chips -= BLINDS.small;
-        players[1].chips -= BLINDS.big;
+        // 새로운 헤즈업: 4명 중 블라인드 포지션 플레이어들만 차감
+        players.forEach(player => {
+          if (player.position === 'Small Blind') {
+            player.chips -= BLINDS.small;
+          } else if (player.position === 'Big Blind') {
+            player.chips -= BLINDS.big;
+          }
+        });
       } else {
         // 4인: 블라인드 포지션에 따라 차감
         players.forEach(player => {
@@ -1623,9 +1658,9 @@ const HoldemMaster = () => {
         pot: BLINDS.small + BLINDS.big,
         currentBet: BLINDS.big,
         gamePhase: 'preflop',
-        activePlayer: mode === 'headsup' ? 0 : activePos, // 헤즈업: 플레이어(SB) 시작, 4인: 모드별 시작 포지션
-        dealerPosition: mode === 'headsup' ? 0 : dealerPos, // 헤즈업: 플레이어가 딜러/SB, 4인: 모드별 딜러 포지션
-        deck: mode === 'headsup' ? deck.slice(4) : deck.slice(8), // 사용된 카드 수에 따라 조정
+        activePlayer: mode === 'headsup' ? activePos : activePos, // 헤즈업: SB부터 시작 (AI Folder 1), 4인: 모드별 시작 포지션  
+        dealerPosition: mode === 'headsup' ? dealerPos : dealerPos, // 헤즈업: 플레이어가 딜러, 4인: 모드별 딜러 포지션
+        deck: deck.slice(8), // 모든 모드에서 4명의 카드 사용
         round: 1,
         winners: null,
         showdown: false,
