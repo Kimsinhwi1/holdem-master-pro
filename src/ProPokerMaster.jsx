@@ -4,6 +4,7 @@ import { findBestHand } from './utils/cardUtils.js';
 import Card from './components/Card.jsx';
 import Player from './components/Player.jsx';
 import AdSenseAd from './components/AdSenseAd.jsx';
+import Announcement from './components/Announcement.jsx';
 
 // 광고 배너 컴포넌트 (AdSense)
 const AdBanner = ({ adSlot = "1234567890", className = "" }) => (
@@ -3165,6 +3166,9 @@ const HoldemMaster = () => {
       {currentView === 'menu' && <MenuView />}
       {currentView === 'game' && <GameView />}
       {currentView === 'theory' && <TheoryView />}
+      
+      {/* 공지사항 - 하단 고정 */}
+      <Announcement LANGUAGES={LANGUAGES} currentLanguage={currentLanguage} />
     </div>
   );
 };
