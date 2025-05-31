@@ -3099,7 +3099,7 @@ const HoldemMaster = () => {
   return (
     <div className="w-full">
       {/* 🚀 SEO Head */}
-      <SEOHead {...pageData} />
+      <tmpSEOHead {...pageData} />
       
       {/* 🚀 네비게이션 */}
       <Navigation
