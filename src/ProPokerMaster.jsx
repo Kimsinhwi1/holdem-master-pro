@@ -3114,7 +3114,7 @@ const HoldemMaster = () => {
       {currentView === 'game' && renderGameView()}
       {currentView === 'blog' && <tmpBlogSection />}
       {currentView === 'faq' && <tmpFAQ />}
-      {currentView === 'glossary' && <PokerGlossary />}
+      {currentView === 'glossary' && <tmpPokerGlossary />}
       
       {/* 🚀 기존 팝업들 */}
       {showTheoryPopup && (
