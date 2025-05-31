@@ -12,7 +12,7 @@ import Announcement from './components/Announcement.jsx';
 // 🚀 새로운 SEO 컴포넌트들 (패키지 설치 후 주석 해제)
 import SEOHead from './components/SEOHead.jsx';
 import Navigation from './components/Navigation.jsx';
-// import BlogSection from './components/BlogSection.jsx';
+import BlogSection from './components/BlogSection.jsx';
 // import FAQ from './components/FAQ.jsx';
 // import PokerGlossary from './components/PokerGlossary.jsx';
 
@@ -3112,7 +3112,7 @@ const HoldemMaster = () => {
       {currentView === 'menu' && renderMenuView()}
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
-      {currentView === 'blog' && <TempBlogSection />}
+      {currentView === 'blog' && <BlogSection />}
       {currentView === 'faq' && <TempFAQ />}
       {currentView === 'glossary' && <TempPokerGlossary />}
       
