@@ -3,60 +3,55 @@
   "version": "1.0.0",
   "description": "프로 텍사스 홀덤 마스터 - AI와 함께 배우는 무료 포커 학습 앱",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "sitemap": "node scripts/generate-sitemap.js",
-    "seo-check": "node scripts/seo-check.js"
-  },
-  "keywords": [
-    "텍사스 홀덤",
-    "포커 게임",
-    "포커 학습",
-    "포커 앱",
-    "홀덤 마스터",
-    "AI 포커",
-    "무료 포커",
-    "포커 교육",
-    "texas holdem",
-    "poker training"
-  ],
-  "author": "홀덤마스터 팀",
-  "license": "ISC",
-  "homepage": "https://holdem-master.com",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/holdem-master/poker-master-pro"
+    "sitemap": "node scripts/generate-sitemap.js"
   },
   "dependencies": {
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-helmet": "^6.1.0",
-    "react-router-dom": "^6.28.0",
-    "gtag": "^1.0.1"
+    "react-helmet-async": "^2.0.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.5.0",
-    "vite": "^6.3.5",
-    "vite-plugin-pwa": "^0.21.1",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "sitemap": "^8.0.0",
-    "schema-dts": "^1.1.2"
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.5"
+  },
+  "keywords": [
+    "포커",
+    "홀덤",
+    "텍사스홀덤",
+    "포커게임",
+    "카드게임",
+    "AI포커",
+    "포커학습",
+    "포커전략",
+    "무료포커",
+    "온라인포커",
+    "poker",
+    "texas holdem",
+    "card game",
+    "poker strategy"
+  ],
+  "author": "홀덤마스터 프로",
+  "license": "MIT",
+  "homepage": "https://holdem-master.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/holdem-master/poker-master-pro.git"
+  },
+  "seo": {
+    "title": "홀덤마스터 프로 - 무료 텍사스 홀덤 학습 게임",
+    "description": "AI와 함께 배우는 프로급 포커 스킬! 실시간 확률 계산, 블러프 훈련, 포지션 전략까지. 초보자부터 프로까지 모든 레벨 대응.",
+    "ogImage": "https://holdem-master.com/og-image.jpg",
+    "twitterCard": "summary_large_image"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ],
-  "seo": {
-    "title": "프로 텍사스 홀덤 마스터 | AI와 함께 배우는 무료 포커 학습",
-    "description": "AI와 함께 배우는 최고의 텍사스 홀덤 학습 앱! 프리플롭부터 고급 전략까지, 체계적인 포커 교육으로 프로가 되어보세요. 무료 플레이 가능!",
-    "url": "https://holdem-master.com",
-    "image": "https://holdem-master.com/og-image.jpg",
-    "locale": "ko_KR",
-    "type": "website"
-  }
+    "not dead"
+  ]
 }
