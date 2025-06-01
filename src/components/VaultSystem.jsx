@@ -507,7 +507,7 @@ const VaultSystem = ({ isOpen, onClose, playerStats, setPlayerStats }) => {
               {/* 입출금 안내 */}
               <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-xl p-6 border border-slate-600">
                 <h4 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                  <Safe className="w-5 h-5 text-blue-400" />
+                  <Lock className="w-5 h-5 text-blue-400" />
                   금고 시스템 안내
                 </h4>
                 <div className="grid md:grid-cols-2 gap-4 text-slate-300 text-sm">
