@@ -2449,7 +2449,10 @@ const BlogSection = () => {
                     className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-start space-x-3">
-                      <post.icon className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" />
+                      {(() => {
+                        const Icon = post.icon;
+                        return Icon ? <Icon className="h-5 w-5 text-blue-600 mt-1 flex-shrink-0" /> : null;
+                      })()}
                       <div>
                         <h4 className="font-medium text-sm text-gray-900 line-clamp-2">
                           {post.title}
@@ -2534,7 +2537,10 @@ const FeaturedPostCard = ({ post, onClick }) => (
       <span className="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">
         특집
       </span>
-      <post.icon className="h-8 w-8" />
+      {(() => {
+        const Icon = post.icon;
+        return Icon ? <Icon className="h-8 w-8" /> : null;
+      })()}
     </div>
     <h3 className="text-xl font-bold mb-3 line-clamp-2">{post.title}</h3>
     <p className="text-white/90 mb-4 line-clamp-3">{post.excerpt}</p>
@@ -2567,7 +2573,10 @@ const PostCard = ({ post, onClick }) => (
         <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
           {post.category}
         </span>
-        <post.icon className="h-6 w-6 text-gray-400 group-hover:text-blue-600 transition-colors" />
+        {(() => {
+          const Icon = post.icon;
+          return Icon ? <Icon className="h-6 w-6 text-gray-400 group-hover:text-blue-600 transition-colors" /> : null;
+        })()}
       </div>
       
       <h3 className="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
