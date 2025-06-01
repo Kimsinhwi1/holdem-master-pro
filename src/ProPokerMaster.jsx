@@ -8,7 +8,7 @@ import Player from './components/Player.jsx';
 import AdSenseAd from './components/AdSenseAd.jsx';
 import Announcement from './components/Announcement.jsx';
 
-// 🚀 새로운 컴포넌트들 import
+// 🚀 실제 컴포넌트들 import
 import HoldemPuzzle from './HoldemPuzzle.jsx';
 import VaultSystem from './VaultSystem.jsx';
 
