@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Users, Brain, TrendingUp, Target, Settings, Play, BarChart3, Calculator, Eye, Zap, Trophy, Star, ChevronRight, ChevronLeft, BookOpen, PieChart, Clock, Award, Gift, HelpCircle, Database, Gamepad2, LineChart, Activity, Users2, Lightbulb, FileText, Video, MessageCircle, AlertTriangle, CheckCircle, XCircle, ArrowUp, ArrowDown, X, Menu, Tv, RefreshCw, GraduationCap, Coins, Book, Wallet, CreditCard, Banknote, DollarSign, Plus, Minus, ShoppingCart, Safe, Puzzle, Share2, Calendar } from 'lucide-react';
+import { Users, Brain, TrendingUp, Target, Settings, Play, BarChart3, Calculator, Eye, Zap, Trophy, Star, ChevronRight, ChevronLeft, BookOpen, PieChart, Clock, Award, Gift, HelpCircle, Database, Gamepad2, LineChart, Activity, Users2, Lightbulb, FileText, Video, MessageCircle, AlertTriangle, CheckCircle, XCircle, ArrowUp, ArrowDown, X, Menu, Tv, RefreshCw, GraduationCap, Coins, Book, Wallet, CreditCard, Banknote, DollarSign, Plus, Minus, ShoppingCart, Vault, Puzzle, Share2, Calendar } from 'lucide-react';
 
 // 🎯 기존 imports 그대로 유지
 import { findBestHand } from './utils/cardUtils.js';
@@ -2732,7 +2732,7 @@ const HoldemMaster = () => {
             onClick={() => setShowVaultModal(true)}
             className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105"
           >
-            <Safe className="w-8 h-8 mx-auto mb-2 text-green-400" />
+            <Vault className="w-8 h-8 mx-auto mb-2 text-green-400" />
             <div className="text-2xl font-bold">무료 금고</div>
             <div className="text-sm text-emerald-200">칩 충전 & 관리</div>
           </div>
