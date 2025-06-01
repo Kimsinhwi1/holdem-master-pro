@@ -246,7 +246,7 @@ const VaultSystem = ({ isOpen, onClose, playerStats, setPlayerStats }) => {
         <div className="sticky top-0 bg-slate-800/95 backdrop-blur-sm border-b border-slate-600 px-8 py-6 flex justify-between items-center">
           <h2 className="text-4xl font-bold text-white flex items-center gap-4">
             <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
-              <Safe className="w-7 h-7 text-white" />
+              <Vault className="w-7 h-7 text-white" />
             </div>
             무료 칩 금고
           </h2>
