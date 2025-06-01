@@ -9,8 +9,8 @@ import AdSenseAd from './components/AdSenseAd.jsx';
 import Announcement from './components/Announcement.jsx';
 
 // 🚀 실제 컴포넌트들 import
-// import HoldemPuzzle from './HoldemPuzzle.jsx';
-// import VaultSystem from './VaultSystem.jsx';
+import HoldemPuzzle from './HoldemPuzzle.jsx';
+import VaultSystem from './VaultSystem.jsx';
 
 // 🚀 SEO 컴포넌트들 (실제 import 사용)
 import SEOHead from './components/SEOHead.jsx';
@@ -3271,23 +3271,23 @@ const HoldemMaster = () => {
       {currentView === 'menu' && renderMenuView()}
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
-      {/* {currentView === 'puzzle' && (
+      {currentView === 'puzzle' && (
         <HoldemPuzzle 
           onClose={() => setCurrentView('menu')} 
           onChipReward={handleChipReward}
         />
-      )} */}
+      )}
       {currentView === 'blog' && <BlogSection />}
       {currentView === 'faq' && <FAQ />}
       {currentView === 'glossary' && <PokerGlossary />}
       
-      {/* 🚀 금고 시스템 모달
+      🚀 금고 시스템 모달
       <VaultSystem
         isOpen={showVaultModal}
         onClose={() => setShowVaultModal(false)}
         playerStats={playerStats}
         setPlayerStats={setPlayerStats}
-      /> */}
+      />
       
       {/* 🚀 기존 팝업들 */}
       {showTheoryPopup && (
