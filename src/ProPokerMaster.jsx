@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 // HelmetProvider 제거됨 - main.jsx에서 간소화
-import { Users, Brain, TrendingUp, Target, Settings, Play, BarChart3, Calculator, Eye, Zap, Trophy, Star, ChevronRight, ChevronLeft, BookOpen, PieChart, Clock, Award, Gift, HelpCircle, Database, Gamepad2, LineChart, Activity, Users2, Lightbulb, FileText, Video, MessageCircle, AlertTriangle, CheckCircle, XCircle, ArrowUp, ArrowDown, X, Menu, Tv, RefreshCw, GraduationCap, Coins, Book } from 'lucide-react';
+import { Users, Brain, TrendingUp, Target, Settings, Play, BarChart3, Calculator, Eye, Zap, Trophy, Star, ChevronRight, ChevronLeft, BookOpen, PieChart, Clock, Award, Gift, HelpCircle, Database, Gamepad2, LineChart, Activity, Users2, Lightbulb, FileText, Video, MessageCircle, AlertTriangle, CheckCircle, XCircle, ArrowUp, ArrowDown, X, Menu, Tv, RefreshCw, GraduationCap, Coins, Book, Wallet, CreditCard, Banknote, DollarSign, Plus, Minus, ShoppingCart, Safe } from 'lucide-react';
 
 // 🎯 기존 imports 그대로 유지
 import { findBestHand } from './utils/cardUtils.js';
@@ -15,6 +15,29 @@ import Navigation from './components/Navigation.jsx';
 import BlogSection from './components/BlogSection.jsx';
 import FAQ from './components/FAQ.jsx';
 import PokerGlossary from './components/PokerGlossary.jsx';
+
+// 🚀 새로운 칩 관련 상수들
+const CHIP_DENOMINATIONS = {
+  1: { color: '#ffffff', borderColor: '#cccccc', textColor: '#000000' },
+  5: { color: '#ff4444', borderColor: '#cc0000', textColor: '#ffffff' },
+  10: { color: '#4444ff', borderColor: '#0000cc', textColor: '#ffffff' },
+  25: { color: '#44ff44', borderColor: '#00cc00', textColor: '#000000' },
+  50: { color: '#ffaa00', borderColor: '#cc7700', textColor: '#000000' },
+  100: { color: '#000000', borderColor: '#444444', textColor: '#ffffff' },
+  500: { color: '#aa44ff', borderColor: '#7700cc', textColor: '#ffffff' },
+  1000: { color: '#ffff44', borderColor: '#cccc00', textColor: '#000000' },
+  5000: { color: '#ff44aa', borderColor: '#cc0077', textColor: '#ffffff' },
+  10000: { color: '#44ffaa', borderColor: '#00cc77', textColor: '#000000' }
+};
+
+const BANK_PACKAGES = [
+  { amount: 1000, price: '$0.99', bonus: 0, popular: false },
+  { amount: 5000, price: '$4.99', bonus: 500, popular: false },
+  { amount: 10000, price: '$9.99', bonus: 2000, popular: true },
+  { amount: 25000, price: '$19.99', bonus: 7500, popular: false },
+  { amount: 50000, price: '$39.99', bonus: 20000, popular: false },
+  { amount: 100000, price: '$79.99', bonus: 50000, popular: false }
+];
 
 // 🎯 임시 SEO Head 컴포넌트 (react-helmet-async 없이도 작동)
 const TempSEOHead = ({ title, description }) => {
@@ -198,6 +221,741 @@ const TempGlossary = () => (
     </div>
   </div>
 );
+
+// 🎯 칩 컴포넌트
+const PokerChip = ({ value, size = 'medium', onClick, className = '', animate = false, style = {} }) => {
+  const chipData = CHIP_DENOMINATIONS[value] || CHIP_DENOMINATIONS[1];
+  const sizeMap = {
+    small: { width: '30px', height: '30px', fontSize: '10px' },
+    medium: { width: '50px', height: '50px', fontSize: '12px' },
+    large: { width: '70px', height: '70px', fontSize: '14px' },
+    xl: { width: '90px', height: '90px', fontSize: '16px' }
+  };
+  
+  const chipSize = sizeMap[size];
+  
+  return (
+    <div
+      onClick={onClick}
+      className={`poker-chip ${className} ${animate ? 'chip-animate' : ''} ${onClick ? 'cursor-pointer' : ''}`}
+      style={{
+        ...chipSize,
+        backgroundColor: chipData.color,
+        border: `3px solid ${chipData.borderColor}`,
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: chipData.textColor,
+        fontWeight: 'bold',
+        fontSize: chipSize.fontSize,
+        boxShadow: '0 4px 8px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.3)',
+        position: 'relative',
+        transition: 'all 0.3s ease',
+        ...style
+      }}
+    >
+      <div
+        style={{
+          width: '80%',
+          height: '80%',
+          border: `2px dashed ${chipData.borderColor}`,
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        ${value}
+      </div>
+      
+      <style jsx>{`
+        .poker-chip:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+        
+        .chip-animate {
+          animation: chipBounce 0.6s ease-out;
+        }
+        
+        @keyframes chipBounce {
+          0% { transform: scale(0) rotate(180deg); }
+          50% { transform: scale(1.2) rotate(90deg); }
+          100% { transform: scale(1) rotate(0deg); }
+        }
+        
+        .chip-flying {
+          animation: chipFly 0.8s ease-out forwards;
+        }
+        
+        @keyframes chipFly {
+          0% { transform: translateY(0) scale(1); opacity: 1; }
+          50% { transform: translateY(-30px) scale(0.8); opacity: 0.8; }
+          100% { transform: translateY(-60px) scale(0.6); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// 🎯 칩 스택 컴포넌트
+const ChipStack = ({ chips, maxVisible = 5, onClick, label, animate = false }) => {
+  const chipCounts = {};
+  
+  // 칩을 액면가별로 정리
+  Object.keys(CHIP_DENOMINATIONS).forEach(denom => {
+    chipCounts[denom] = 0;
+  });
+  
+  let remainingChips = chips;
+  const denominations = Object.keys(CHIP_DENOMINATIONS).map(Number).sort((a, b) => b - a);
+  
+  denominations.forEach(denom => {
+    chipCounts[denom] = Math.floor(remainingChips / denom);
+    remainingChips = remainingChips % denom;
+  });
+  
+  return (
+    <div className="chip-stack-container" onClick={onClick}>
+      {label && (
+        <div className="text-center text-sm font-bold text-white mb-2">
+          {label}: ${chips.toLocaleString()}
+        </div>
+      )}
+      
+      <div className="flex flex-wrap justify-center gap-2">
+        {denominations.map(denom => {
+          const count = chipCounts[denom];
+          if (count === 0) return null;
+          
+          return (
+            <div key={denom} className="relative">
+              <div className="flex flex-col items-center">
+                {/* 스택 표시 */}
+                <div className="relative">
+                  {[...Array(Math.min(count, maxVisible))].map((_, index) => (
+                    <PokerChip
+                      key={index}
+                      value={denom}
+                      size="medium"
+                      animate={animate && index === 0}
+                      style={{
+                        position: index === 0 ? 'relative' : 'absolute',
+                        top: index === 0 ? 0 : `-${index * 4}px`,
+                        left: index === 0 ? 0 : `${index * 2}px`,
+                        zIndex: maxVisible - index
+                      }}
+                    />
+                  ))}
+                  
+                  {/* 스택 개수 표시 */}
+                  {count > maxVisible && (
+                    <div className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+                      {count}
+                    </div>
+                  )}
+                </div>
+                
+                {/* 개수 라벨 */}
+                <div className="text-xs text-white mt-1">
+                  {count}x
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      <style jsx>{`
+        .chip-stack-container {
+          transition: all 0.3s ease;
+          padding: 10px;
+          border-radius: 10px;
+          background: rgba(0,0,0,0.2);
+        }
+        
+        .chip-stack-container:hover {
+          background: rgba(0,0,0,0.4);
+          transform: translateY(-2px);
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// 🎯 금고 컴포넌트
+const BankModal = ({ isOpen, onClose, playerStats, setPlayerStats }) => {
+  const [activeTab, setActiveTab] = useState('rebuy');
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [depositAmount, setDepositAmount] = useState('');
+  
+  // 금고 잔액 (localStorage에서 관리)
+  const [bankBalance, setBankBalance] = useState(() => {
+    try {
+      const saved = localStorage.getItem('pokerMasterBank');
+      return saved ? JSON.parse(saved) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  
+  useEffect(() => {
+    localStorage.setItem('pokerMasterBank', JSON.stringify(bankBalance));
+  }, [bankBalance]);
+  
+  const handlePurchase = (packageData) => {
+    // 실제 결제 시스템과 연동할 부분
+    const totalAmount = packageData.amount + packageData.bonus;
+    setBankBalance(prev => prev + totalAmount);
+    setSelectedPackage(null);
+    
+    // 구매 확인 메시지
+    alert(`🎉 구매 완료!\n칩 ${packageData.amount.toLocaleString()}개 + 보너스 ${packageData.bonus.toLocaleString()}개\n총 ${totalAmount.toLocaleString()}개의 칩이 금고에 추가되었습니다!`);
+  };
+  
+  const handleWithdraw = () => {
+    const amount = parseInt(withdrawAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('올바른 금액을 입력하세요.');
+      return;
+    }
+    
+    if (amount > bankBalance) {
+      alert('금고 잔액이 부족합니다.');
+      return;
+    }
+    
+    setBankBalance(prev => prev - amount);
+    setPlayerStats(prev => ({
+      ...prev,
+      totalChips: prev.totalChips + amount
+    }));
+    setWithdrawAmount('');
+    
+    alert(`💰 ${amount.toLocaleString()}개의 칩을 인출했습니다!`);
+  };
+  
+  const handleDeposit = () => {
+    const amount = parseInt(depositAmount);
+    if (isNaN(amount) || amount <= 0) {
+      alert('올바른 금액을 입력하세요.');
+      return;
+    }
+    
+    if (amount > playerStats.totalChips) {
+      alert('보유 칩이 부족합니다.');
+      return;
+    }
+    
+    setBankBalance(prev => prev + amount);
+    setPlayerStats(prev => ({
+      ...prev,
+      totalChips: prev.totalChips - amount
+    }));
+    setDepositAmount('');
+    
+    alert(`🏦 ${amount.toLocaleString()}개의 칩을 예금했습니다!`);
+  };
+  
+  const handleFreeChips = () => {
+    const freeAmount = 1000;
+    setBankBalance(prev => prev + freeAmount);
+    alert(`🎁 무료 칩 ${freeAmount.toLocaleString()}개가 금고에 추가되었습니다!\n매일 한 번씩 받을 수 있습니다.`);
+  };
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-green-800 to-emerald-900 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        
+        {/* 헤더 */}
+        <div className="sticky top-0 bg-green-800/90 backdrop-blur-sm border-b border-green-600 px-6 py-4 flex justify-between items-center">
+          <h2 className="text-3xl font-bold text-white flex items-center gap-3">
+            <Safe className="w-8 h-8 text-yellow-400" />
+            포커 뱅크
+          </h2>
+          <button onClick={onClose} className="text-white hover:text-gray-300 transition-colors">
+            <X className="w-8 h-8" />
+          </button>
+        </div>
+        
+        {/* 잔액 표시 */}
+        <div className="px-6 py-4 bg-black/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white/10 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Coins className="w-6 h-6 text-yellow-400" />
+                <h3 className="text-lg font-bold text-white">게임 칩</h3>
+              </div>
+              <div className="text-3xl font-bold text-yellow-400">
+                {playerStats.totalChips.toLocaleString()}
+              </div>
+            </div>
+            
+            <div className="bg-white/10 rounded-lg p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Wallet className="w-6 h-6 text-green-400" />
+                <h3 className="text-lg font-bold text-white">금고 잔액</h3>
+              </div>
+              <div className="text-3xl font-bold text-green-400">
+                {bankBalance.toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* 탭 네비게이션 */}
+        <div className="px-6 py-2">
+          <div className="flex gap-2">
+            {[
+              { id: 'rebuy', label: '💰 칩 구매', icon: ShoppingCart },
+              { id: 'transfer', label: '🏦 입출금', icon: CreditCard },
+              { id: 'free', label: '🎁 무료 칩', icon: Gift }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === tab.id 
+                    ? 'bg-yellow-500 text-yellow-900' 
+                    : 'bg-white/10 text-white hover:bg-white/20'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="px-6 pb-6">
+          
+          {/* 칩 구매 탭 */}
+          {activeTab === 'rebuy' && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-white mb-4">💰 칩 패키지</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {BANK_PACKAGES.map((pkg, index) => (
+                  <div
+                    key={index}
+                    className={`relative bg-white/10 rounded-lg p-4 border-2 transition-all cursor-pointer ${
+                      pkg.popular 
+                        ? 'border-yellow-400 bg-yellow-400/10' 
+                        : 'border-white/20 hover:border-white/40'
+                    }`}
+                    onClick={() => setSelectedPackage(pkg)}
+                  >
+                    {pkg.popular && (
+                      <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-bold">
+                        인기!
+                      </div>
+                    )}
+                    
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-white mb-2">
+                        {pkg.amount.toLocaleString()}
+                      </div>
+                      {pkg.bonus > 0 && (
+                        <div className="text-green-400 font-bold mb-2">
+                          + {pkg.bonus.toLocaleString()} 보너스!
+                        </div>
+                      )}
+                      <div className="text-lg font-bold text-yellow-400 mb-4">
+                        {pkg.price}
+                      </div>
+                      
+                      <ChipStack 
+                        chips={pkg.amount + pkg.bonus} 
+                        maxVisible={3}
+                        animate={selectedPackage === pkg}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {selectedPackage && (
+                <div className="bg-yellow-400/20 border border-yellow-400 rounded-lg p-4 mt-4">
+                  <div className="text-center">
+                    <h4 className="text-lg font-bold text-white mb-2">선택된 패키지</h4>
+                    <div className="text-xl font-bold text-yellow-400 mb-2">
+                      {selectedPackage.amount.toLocaleString()}개
+                      {selectedPackage.bonus > 0 && (
+                        <span className="text-green-400"> + {selectedPackage.bonus.toLocaleString()}개 보너스</span>
+                      )}
+                    </div>
+                    <div className="text-lg text-white mb-4">{selectedPackage.price}</div>
+                    
+                    <div className="flex gap-3 justify-center">
+                      <button
+                        onClick={() => handlePurchase(selectedPackage)}
+                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-bold transition-colors"
+                      >
+                        💳 구매하기
+                      </button>
+                      <button
+                        onClick={() => setSelectedPackage(null)}
+                        className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-bold transition-colors"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* 입출금 탭 */}
+          {activeTab === 'transfer' && (
+            <div className="space-y-6">
+              
+              {/* 인출 */}
+              <div className="bg-white/10 rounded-lg p-4">
+                <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <ArrowDown className="w-5 h-5 text-green-400" />
+                  금고에서 게임으로 인출
+                </h4>
+                <div className="flex gap-3">
+                  <input
+                    type="number"
+                    value={withdrawAmount}
+                    onChange={(e) => setWithdrawAmount(e.target.value)}
+                    placeholder="인출할 칩 수량"
+                    className="flex-1 px-4 py-2 bg-black/20 text-white rounded-lg border border-white/20 focus:border-green-400 focus:outline-none"
+                    max={bankBalance}
+                  />
+                  <button
+                    onClick={handleWithdraw}
+                    disabled={!withdrawAmount || parseInt(withdrawAmount) > bankBalance}
+                    className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-bold transition-colors"
+                  >
+                    인출
+                  </button>
+                </div>
+                <div className="text-sm text-gray-300 mt-2">
+                  최대 인출 가능: {bankBalance.toLocaleString()}개
+                </div>
+              </div>
+              
+              {/* 예금 */}
+              <div className="bg-white/10 rounded-lg p-4">
+                <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <ArrowUp className="w-5 h-5 text-blue-400" />
+                  게임에서 금고로 예금
+                </h4>
+                <div className="flex gap-3">
+                  <input
+                    type="number"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    placeholder="예금할 칩 수량"
+                    className="flex-1 px-4 py-2 bg-black/20 text-white rounded-lg border border-white/20 focus:border-blue-400 focus:outline-none"
+                    max={playerStats.totalChips}
+                  />
+                  <button
+                    onClick={handleDeposit}
+                    disabled={!depositAmount || parseInt(depositAmount) > playerStats.totalChips}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-bold transition-colors"
+                  >
+                    예금
+                  </button>
+                </div>
+                <div className="text-sm text-gray-300 mt-2">
+                  최대 예금 가능: {playerStats.totalChips.toLocaleString()}개
+                </div>
+              </div>
+              
+              {/* 빠른 액션 버튼들 */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[1000, 5000, 10000, 'all'].map(amount => (
+                  <button
+                    key={amount}
+                    onClick={() => {
+                      if (amount === 'all') {
+                        setWithdrawAmount(bankBalance.toString());
+                      } else {
+                        setWithdrawAmount(Math.min(amount, bankBalance).toString());
+                      }
+                    }}
+                    className="bg-white/10 hover:bg-white/20 text-white py-2 px-3 rounded-lg font-medium transition-colors"
+                  >
+                    {amount === 'all' ? '전체' : `${amount.toLocaleString()}`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* 무료 칩 탭 */}
+          {activeTab === 'free' && (
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-white mb-4">🎁 무료 칩 받기</h3>
+              
+              <div className="grid gap-4">
+                
+                {/* 일일 보너스 */}
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Gift className="w-5 h-5 text-yellow-400" />
+                        일일 보너스
+                      </h4>
+                      <p className="text-gray-300">매일 1,000개의 무료 칩을 받으세요!</p>
+                    </div>
+                    <button
+                      onClick={handleFreeChips}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-yellow-900 px-6 py-3 rounded-lg font-bold transition-colors"
+                    >
+                      받기
+                    </button>
+                  </div>
+                </div>
+                
+                {/* 광고 시청 */}
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Tv className="w-5 h-5 text-green-400" />
+                        광고 시청
+                      </h4>
+                      <p className="text-gray-300">30초 광고를 보고 2,000개의 칩을 받으세요!</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        // 광고 시청 로직
+                        setTimeout(() => {
+                          setBankBalance(prev => prev + 2000);
+                          alert('🎁 광고 시청으로 2,000개의 칩을 받았습니다!');
+                        }, 2000);
+                      }}
+                      className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-bold transition-colors"
+                    >
+                      시청하기
+                    </button>
+                  </div>
+                </div>
+                
+                {/* 소셜 미디어 공유 */}
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Users className="w-5 h-5 text-blue-400" />
+                        친구 초대
+                      </h4>
+                      <p className="text-gray-300">친구를 초대하고 둘 다 5,000개의 칩을 받으세요!</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.share?.({
+                          title: '홀덤마스터 프로',
+                          text: '최고의 포커 학습 게임! 함께 플레이해요!',
+                          url: window.location.href
+                        }) || alert('친구들에게 이 게임을 추천해주세요!');
+                      }}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-bold transition-colors"
+                    >
+                      초대하기
+                    </button>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          )}
+          
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 🎯 개선된 베팅 UI (칩 기반)
+const EnhancedBettingControls = ({ player, gameState, onAction, mode, LANGUAGES, currentLanguage }) => {
+  const [selectedChips, setSelectedChips] = useState([]);
+  const [betAmount, setBetAmount] = useState(0);
+  const [showChipSelector, setShowChipSelector] = useState(false);
+
+  const callAmount = Math.max(0, gameState.currentBet - player.currentBet);
+  const canCheck = callAmount === 0;
+  const minRaise = Math.max(gameState.currentBet + 20, player.currentBet + 20); // 최소 레이즈
+  const maxBet = player.chips + player.currentBet;
+
+  // 사용 가능한 칩 데노미네이션 계산
+  const availableChips = Object.keys(CHIP_DENOMINATIONS)
+    .map(Number)
+    .filter(denom => denom <= player.chips)
+    .sort((a, b) => a - b);
+
+  const addChipToBet = (chipValue) => {
+    if (betAmount + chipValue <= player.chips) {
+      setSelectedChips(prev => [...prev, chipValue]);
+      setBetAmount(prev => prev + chipValue);
+    }
+  };
+
+  const clearBet = () => {
+    setSelectedChips([]);
+    setBetAmount(0);
+  };
+
+  const handleAction = (action, amount = 0) => {
+    setShowChipSelector(false);
+    clearBet();
+    onAction(action, amount);
+  };
+
+  return (
+    <div className="bg-black/90 backdrop-blur-md rounded-xl p-6 border-2 border-yellow-500/50 shadow-2xl">
+      
+      {/* 팟 정보 */}
+      <div className="text-center mb-4">
+        <div className="text-white text-xl font-bold mb-2">당신의 턴</div>
+        <div className="text-yellow-400 text-sm">
+          팟: ${gameState.pot.toLocaleString()} | 
+          {callAmount > 0 ? ` 콜: $${callAmount.toLocaleString()}` : ' 체크 가능'} | 
+          칩: ${player.chips.toLocaleString()}
+        </div>
+      </div>
+
+      {/* 현재 칩 스택 표시 */}
+      <div className="mb-4">
+        <ChipStack 
+          chips={player.chips} 
+          label="보유 칩"
+          maxVisible={4}
+        />
+      </div>
+
+      {/* 베팅 금액 표시 */}
+      {betAmount > 0 && (
+        <div className="mb-4 p-3 bg-yellow-400/20 rounded-lg border border-yellow-400">
+          <div className="text-center">
+            <div className="text-yellow-400 font-bold text-lg mb-2">
+              베팅: ${betAmount.toLocaleString()}
+            </div>
+            <div className="flex justify-center gap-1 mb-3">
+              {selectedChips.map((chip, index) => (
+                <PokerChip
+                  key={index}
+                  value={chip}
+                  size="small"
+                  animate={index === selectedChips.length - 1}
+                />
+              ))}
+            </div>
+            <button
+              onClick={clearBet}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              초기화
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 칩 선택기 */}
+      {showChipSelector && (
+        <div className="mb-4 p-4 bg-white/10 rounded-lg border border-white/20">
+          <div className="text-white text-sm font-semibold mb-3 text-center">배팅할 칩을 선택하세요</div>
+          <div className="grid grid-cols-5 gap-2">
+            {availableChips.map(chipValue => (
+              <PokerChip
+                key={chipValue}
+                value={chipValue}
+                size="medium"
+                onClick={() => addChipToBet(chipValue)}
+                className="hover:scale-110 transition-transform"
+              />
+            ))}
+          </div>
+          
+          {/* 빠른 베팅 버튼들 */}
+          <div className="flex gap-2 mt-3">
+            {[0.25, 0.5, 0.75, 1].map(ratio => {
+              const amount = Math.floor(gameState.pot * ratio);
+              return (
+                <button
+                  key={ratio}
+                  onClick={() => setBetAmount(Math.min(amount, player.chips))}
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-1 px-2 rounded text-xs transition-colors"
+                >
+                  {ratio === 1 ? '팟' : `${ratio * 100}%`}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 액션 버튼들 */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          onClick={() => handleAction('fold')}
+          className="bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+        >
+          <X className="w-4 h-4" />
+          폴드
+        </button>
+        
+        {canCheck ? (
+          <button
+            onClick={() => handleAction('check')}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+          >
+            <CheckCircle className="w-4 h-4" />
+            체크
+          </button>
+        ) : (
+          <button
+            onClick={() => handleAction('call', callAmount)}
+            disabled={callAmount > player.chips}
+            className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg disabled:transform-none flex items-center justify-center gap-2"
+          >
+            <Coins className="w-4 h-4" />
+            콜 ${callAmount.toLocaleString()}
+          </button>
+        )}
+        
+        <button
+          onClick={() => setShowChipSelector(!showChipSelector)}
+          disabled={minRaise > maxBet}
+          className="bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg disabled:transform-none flex items-center justify-center gap-2"
+        >
+          <DollarSign className="w-4 h-4" />
+          {showChipSelector ? '선택 취소' : '베팅'}
+        </button>
+        
+        <button
+          onClick={() => handleAction('allin', player.chips)}
+          className="bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+        >
+          <Zap className="w-4 h-4" />
+          올인
+        </button>
+      </div>
+
+      {/* 커스텀 베팅 */}
+      {betAmount > 0 && (
+        <button
+          onClick={() => handleAction(betAmount >= gameState.currentBet ? 'raise' : 'call', betAmount)}
+          disabled={betAmount > player.chips}
+          className="w-full mt-3 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-600 text-white py-3 px-4 rounded-lg font-bold transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+        >
+          <Banknote className="w-4 h-4" />
+          ${betAmount.toLocaleString()} {betAmount >= gameState.currentBet ? '레이즈' : '베팅'}
+        </button>
+      )}
+    </div>
+  );
+};
 
 // 🎯 기존의 모든 상수들 그대로 유지
 const SUITS = ['♠', '♥', '♦', '♣'];
@@ -1091,7 +1849,7 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
         <div className="text-white text-xl font-bold mb-2">당신의 턴</div>
         <div className="text-yellow-400 text-sm">
           팟: ${gameState.pot} | 
-          {callAmount > 0 ? ` 콜: $${callAmount}` : ' 체크 가능'} | 
+          {callAmount > 0 ? ` 콜: ${callAmount}` : ' 체크 가능'} | 
           칩: ${player.chips}
         </div>
       </div>
@@ -1269,6 +2027,7 @@ const HoldemMaster = () => {
   const [showTheoryPopup, setShowTheoryPopup] = useState(null);
   const [showRewardAd, setShowRewardAd] = useState(false);
   const [showProChallenge, setShowProChallenge] = useState(false);
+  const [showBankModal, setShowBankModal] = useState(false); // 🚀 금고 모달 상태 추가
   const [lastAction, setLastAction] = useState(null);
   const [actionInProgress, setActionInProgress] = useState(false);
   const [gameWatcherActive, setGameWatcherActive] = useState(false);
@@ -2476,6 +3235,60 @@ const HoldemMaster = () => {
           </div>
         </div>
 
+        {/* 🚀 칩 및 금고 상태 표시 (개선됨) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          
+          {/* 게임 칩 */}
+          <div 
+            onClick={() => setShowBankModal(true)}
+            className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105"
+          >
+            <div className="mb-4">
+              <ChipStack chips={playerStats.totalChips} maxVisible={3} />
+            </div>
+            <div className="text-sm text-emerald-200">게임 칩</div>
+            <div className="text-lg font-bold">{playerStats.totalChips.toLocaleString()}</div>
+          </div>
+          
+          {/* 금고 */}
+          <div 
+            onClick={() => setShowBankModal(true)}
+            className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105"
+          >
+            <Safe className="w-12 h-12 mx-auto mb-2 text-green-400" />
+            <div className="text-sm text-emerald-200">금고</div>
+            <div className="text-lg font-bold">클릭하여 확인</div>
+          </div>
+          
+          {/* 뱅크 바로가기 */}
+          <div 
+            onClick={() => setShowBankModal(true)}
+            className="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl p-6 text-white text-center cursor-pointer hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105"
+          >
+            <Wallet className="w-12 h-12 mx-auto mb-2" />
+            <div className="text-sm">포커 뱅크</div>
+            <div className="text-lg font-bold">입출금 & 구매</div>
+          </div>
+          
+        </div>
+
+        {/* 칩 부족 시 알림 */}
+        {playerStats.totalChips <= 100 && (
+          <div className="bg-red-600/90 border border-red-400 rounded-xl p-4 mb-6 text-center">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <AlertTriangle className="w-6 h-6 text-yellow-400" />
+              <h3 className="text-lg font-bold text-white">칩이 부족합니다!</h3>
+            </div>
+            <p className="text-red-100 mb-4">게임을 계속하려면 칩을 충전하세요.</p>
+            <button
+              onClick={() => setShowBankModal(true)}
+              className="bg-yellow-500 hover:bg-yellow-600 text-yellow-900 px-6 py-3 rounded-lg font-bold transition-colors"
+            >
+              💰 지금 충전하기
+            </button>
+          </div>
+        )}
+
         <div className="flex justify-center gap-4 mb-8">
           <button
             onClick={() => setCurrentView('theory')}
@@ -2930,8 +3743,9 @@ const HoldemMaster = () => {
                 )}
               </div>
 
+              {/* 🚀 개선된 베팅 컨트롤 사용 */}
               {isPlayerTurn && (
-                <BettingControls
+                <EnhancedBettingControls
                   player={currentPlayer}
                   gameState={gameState}
                   onAction={handlePlayerAction}
@@ -3099,13 +3913,12 @@ const HoldemMaster = () => {
   return (
     <div className="w-full">
       {/* 🚀 SEO Head */}
-      <SEOHead {...pageData} />
+      <TempSEOHead {...pageData} />
       
       {/* 🚀 네비게이션 */}
-      <Navigation
+      <TempNavigation
         currentView={currentView}
         onViewChange={setCurrentView}
-        onStartGame={(mode) => initializeGame(mode)} // ← 이 줄 추가
         isGameActive={currentView === 'game'}
       />
 
@@ -3113,9 +3926,17 @@ const HoldemMaster = () => {
       {currentView === 'menu' && renderMenuView()}
       {currentView === 'theory' && renderTheoryView()}
       {currentView === 'game' && renderGameView()}
-      {currentView === 'blog' && <BlogSection onViewChange={setCurrentView} />}
-      {currentView === 'faq' && <FAQ />}
-      {currentView === 'glossary' && <PokerGlossary />}
+      {currentView === 'blog' && <TempBlogSection />}
+      {currentView === 'faq' && <TempFAQ />}
+      {currentView === 'glossary' && <TempGlossary />}
+      
+      {/* 🚀 금고 모달 */}
+      <BankModal
+        isOpen={showBankModal}
+        onClose={() => setShowBankModal(false)}
+        playerStats={playerStats}
+        setPlayerStats={setPlayerStats}
+      />
       
       {/* 🚀 기존 팝업들 */}
       {showTheoryPopup && (
@@ -3147,4 +3968,4 @@ const HoldemMaster = () => {
   );
 };
 
-export default HoldemMaster
+export default HoldemMaster;
