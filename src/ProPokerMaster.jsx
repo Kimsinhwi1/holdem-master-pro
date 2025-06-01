@@ -2732,7 +2732,7 @@ const HoldemMaster = () => {
             onClick={() => setShowVaultModal(true)}
             className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105"
           >
-            <Vault className="w-8 h-8 mx-auto mb-2 text-green-400" />
+            <Lock className="w-8 h-8 mx-auto mb-2 text-green-400" />
             <div className="text-2xl font-bold">무료 금고</div>
             <div className="text-sm text-emerald-200">칩 충전 & 관리</div>
           </div>
