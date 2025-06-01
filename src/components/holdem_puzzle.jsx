@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Puzzle, RefreshCw, Trophy, Target, Brain } from 'lucide-react';
+import { ArrowLeft, Puzzle, RefreshCw, Trophy, Target, Brain, Zap } from 'lucide-react';
 
 // 🎯 홀덤 퍼즐 게임 컴포넌트
 const HoldemPuzzle = ({ onClose, onChipReward }) => {
