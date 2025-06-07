@@ -9,7 +9,7 @@ import AdSenseAd from './components/AdSenseAd.jsx';
 import Announcement from './components/Announcement.jsx';
 
 // 🚀 실제 컴포넌트들 import
-import HoldemPuzzle from './HoldemPuzzle.jsx';
+import HoldemPuzzle from './Holdem_Puzzle.jsx';
 import VaultSystem from './VaultSystem.jsx';
 
 // 🚀 SEO 컴포넌트들 (실제 import 사용)
