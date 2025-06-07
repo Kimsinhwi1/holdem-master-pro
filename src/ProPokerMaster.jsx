@@ -1745,6 +1745,21 @@ const HoldemMaster = () => {
     };
   }, [tipRotationTimer]);
 
+  // 💰 AdSense Auto Ads 초기화 (한 번만)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.adsbygoogle && !window.adsenseInitialized) {
+      try {
+        window.adsbygoogle.push({
+          google_ad_client: "ca-pub-2478956041357030",
+          enable_page_level_ads: true
+        });
+        window.adsenseInitialized = true;
+      } catch (error) {
+        console.warn('AdSense 초기화 오류:', error);
+      }
+    }
+  }, []);
+
   // 🚀 칩 보상 처리 함수
   const handleChipReward = useCallback((amount) => {
     setPlayerStats(prev => ({
