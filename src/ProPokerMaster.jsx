@@ -18,6 +18,9 @@ import Navigation from './components/Navigation.jsx';
 import BlogSection from './components/BlogSection.jsx';
 import FAQ from './components/FAQ.jsx';
 import PokerGlossary from './components/PokerGlossary.jsx';
+import PrivacyPolicy from './components/PrivacyPolicy.jsx';
+import TermsOfService from './components/TermsOfService.jsx';
+import ResponsibleGaming from './components/ResponsibleGaming.jsx';
 
 // 🚀 새로운 칩 관련 상수들
 const CHIP_DENOMINATIONS = {
@@ -134,6 +137,160 @@ const LEARNING_MODES = {
     isCompetitive: true
   }
 };
+
+// 🎯 Educational Loading Tips System - 포커 팁 및 용어 설명
+const POKER_LOADING_TIPS = {
+  basic: [
+    {
+      title: "핸드 랭킹 기초",
+      tip: "로얄 플러시가 가장 강한 핸드입니다. A-K-Q-J-10 같은 무늬로 구성됩니다.",
+      category: "기초",
+      icon: "👑"
+    },
+    {
+      title: "팟 오즈란?",
+      tip: "팟 오즈는 현재 팟 크기 대비 베팅 금액의 비율입니다. 수학적 결정의 기초가 됩니다.",
+      category: "수학",
+      icon: "🔢"
+    },
+    {
+      title: "포지션의 힘",
+      tip: "늦은 포지션(버튼, 컷오프)에서는 더 많은 정보를 가지고 결정할 수 있어 유리합니다.",
+      category: "전략",
+      icon: "📍"
+    },
+    {
+      title: "블라인드란?",
+      tip: "스몰 블라인드와 빅 블라인드는 강제 베팅으로, 게임에 액션을 만들어냅니다.",
+      category: "기초",
+      icon: "💰"
+    },
+    {
+      title: "콜과 레이즈",
+      tip: "콜은 같은 금액을 베팅하는 것, 레이즈는 더 많은 금액을 베팅하는 공격적인 액션입니다.",
+      category: "기초",
+      icon: "⚡"
+    }
+  ],
+  intermediate: [
+    {
+      title: "세미블러프",
+      tip: "현재는 약하지만 개선될 가능성이 있는 핸드로 베팅하는 전략입니다. 플러시 드로우가 대표적입니다.",
+      category: "고급 전략",
+      icon: "🎯"
+    },
+    {
+      title: "임플라이드 오즈",
+      tip: "현재 팟 오즈에 향후 획득할 수 있는 추가 베팅을 고려한 확률입니다.",
+      category: "수학",
+      icon: "📈"
+    },
+    {
+      title: "C-벳이란?",
+      tip: "컨티뉴에이션 베팅은 프리플롭 레이저가 플롭에서 계속 베팅하는 것입니다.",
+      category: "고급 전략",
+      icon: "🔄"
+    },
+    {
+      title: "아웃츠 계산",
+      tip: "플러시 드로우는 9개, 오픈엔디드 스트레이트는 8개의 아웃츠를 가집니다.",
+      category: "수학",
+      icon: "🧮"
+    },
+    {
+      title: "밸류 베팅",
+      tip: "더 약한 핸드로부터 콜을 받기 위해 강한 핸드로 베팅하는 것이 밸류 베팅입니다.",
+      category: "고급 전략",
+      icon: "💎"
+    }
+  ],
+  advanced: [
+    {
+      title: "GTO vs 익스플로잇",
+      tip: "게임 이론적 최적 전략(GTO)은 밸런스된 플레이, 익스플로잇은 상대의 약점을 공략하는 전략입니다.",
+      category: "고급 이론",
+      icon: "🧠"
+    },
+    {
+      title: "레인지 구성",
+      tip: "각 포지션과 상황에 맞는 핸드 레인지를 구성하고 밸런스를 맞추는 것이 중요합니다.",
+      category: "고급 이론",
+      icon: "📊"
+    },
+    {
+      title: "블러프 캐처",
+      tip: "상대의 블러프를 잡을 수 있는 중간 강도의 핸드로, 신중한 판단이 필요합니다.",
+      category: "고급 전략",
+      icon: "🕵️"
+    },
+    {
+      title: "오버베팅",
+      tip: "팟보다 큰 베팅으로, 강한 핸드의 밸류를 극대화하거나 효과적인 블러프에 사용됩니다.",
+      category: "고급 전략",
+      icon: "🚀"
+    },
+    {
+      title: "ICM 고려사항",
+      tip: "토너먼트에서는 Independent Chip Model을 고려해 칩의 가치가 달라짐을 이해해야 합니다.",
+      category: "토너먼트",
+      icon: "🏆"
+    }
+  ],
+  psychology: [
+    {
+      title: "틸트 관리",
+      tip: "감정적 동요는 판단력을 흐리게 합니다. 냉정함을 유지하는 것이 성공의 열쇠입니다.",
+      category: "심리 관리",
+      icon: "🧘"
+    },
+    {
+      title: "배드비트 극복",
+      tip: "배드비트는 포커의 일부입니다. 장기적 관점에서 올바른 결정에 집중하세요.",
+      category: "심리 관리",
+      icon: "💪"
+    },
+    {
+      title: "상대 관찰",
+      tip: "상대의 베팅 패턴, 타이밍, 바디랭귀지를 주의깊게 관찰하여 정보를 수집하세요.",
+      category: "심리 관리",
+      icon: "👁️"
+    }
+  ]
+};
+
+// 🎓 Educational terminology explanations during waiting
+const POKER_TERMINOLOGY_TIPS = [
+  {
+    term: "너츠 (Nuts)",
+    definition: "주어진 보드에서 가능한 가장 강한 핸드",
+    example: "A-K-Q-J-10 보드에서 10을 가지고 있으면 브로드웨이 스트레이트로 너츠입니다.",
+    icon: "🥇"
+  },
+  {
+    term: "브로드웨이",
+    definition: "A-K-Q-J-10으로 이루어진 가장 높은 스트레이트",
+    example: "모든 카드가 10 이상인 카드들을 브로드웨이 카드라고 부릅니다.",
+    icon: "🌟"
+  },
+  {
+    term: "휠 (Wheel)",
+    definition: "A-2-3-4-5로 이루어진 가장 낮은 스트레이트",
+    example: "에이스가 1로 사용되는 유일한 경우입니다.",
+    icon: "🎡"
+  },
+  {
+    term: "거츠샷",
+    definition: "스트레이트 완성을 위해 가운데 한 장이 필요한 드로우",
+    example: "7-9를 가지고 있고 보드에 5-6이 있으면 8이 나와야 스트레이트가 완성됩니다.",
+    icon: "🎯"
+  },
+  {
+    term: "셋 마이닝",
+    definition: "포켓 페어로 셋을 만들기 위해 저렴하게 플롭을 보는 전략",
+    example: "22로 플롭을 저렴하게 본 후 2가 나오면 셋을 만들 수 있습니다.",
+    icon: "⛏️"
+  }
+];
 
 // 학습 이론 및 전략
 const POKER_THEORY = {
@@ -1540,6 +1697,54 @@ const HoldemMaster = () => {
     }
   });
 
+  // 🎯 Educational Loading Tips State
+  const [currentLoadingTip, setCurrentLoadingTip] = useState(null);
+  const [loadingTipVisible, setLoadingTipVisible] = useState(false);
+  const [tipRotationTimer, setTipRotationTimer] = useState(null);
+
+  // 🎓 Function to get random tip based on difficulty level
+  const getRandomTip = useCallback((difficulty = 'basic') => {
+    const allTips = [
+      ...POKER_LOADING_TIPS[difficulty] || POKER_LOADING_TIPS.basic,
+      ...POKER_TERMINOLOGY_TIPS.map(term => ({
+        title: term.term,
+        tip: `${term.definition} - ${term.example}`,
+        category: "용어",
+        icon: term.icon
+      }))
+    ];
+    return allTips[Math.floor(Math.random() * allTips.length)];
+  }, []);
+
+  // 🎯 Show loading tip during AI processing
+  const showLoadingTip = useCallback((duration = 1500, difficulty = 'basic') => {
+    const tip = getRandomTip(difficulty);
+    setCurrentLoadingTip(tip);
+    setLoadingTipVisible(true);
+    
+    // Clear any existing timer
+    if (tipRotationTimer) {
+      clearTimeout(tipRotationTimer);
+    }
+    
+    // Hide tip after duration
+    const timer = setTimeout(() => {
+      setLoadingTipVisible(false);
+      setCurrentLoadingTip(null);
+    }, duration - 200); // Hide slightly before processing ends
+    
+    setTipRotationTimer(timer);
+  }, [tipRotationTimer, getRandomTip]);
+
+  // 🧹 Cleanup tip timer on unmount
+  useEffect(() => {
+    return () => {
+      if (tipRotationTimer) {
+        clearTimeout(tipRotationTimer);
+      }
+    };
+  }, [tipRotationTimer]);
+
   // 🚀 칩 보상 처리 함수
   const handleChipReward = useCallback((amount) => {
     setPlayerStats(prev => ({
@@ -1886,6 +2091,9 @@ const HoldemMaster = () => {
         handsPlayed: prev.handsPlayed + 1
       }));
 
+      // 🎯 Show educational tip during AI thinking
+      showLoadingTip(1500, feedbackLevel === 'master' ? 'advanced' : feedbackLevel === 'pro' ? 'intermediate' : 'basic');
+      
       setTimeout(() => {
         const activePlayerObj = players[initialGameState.activePlayer];
         if (activePlayerObj && !activePlayerObj.isHuman) {
@@ -2360,6 +2568,9 @@ const HoldemMaster = () => {
           setGameState(newGameState);
 
           if (!nextPlayer.isHuman) {
+            // 🎯 Show educational tip during AI decision making
+            showLoadingTip(1500, feedbackLevel === 'master' ? 'advanced' : feedbackLevel === 'pro' ? 'intermediate' : 'basic');
+            
             setTimeout(() => {
               const gameSnapshot = { ...newGameState };
               processAIAction(gameSnapshot);
@@ -2462,6 +2673,11 @@ const HoldemMaster = () => {
       }
     }
 
+    // 🎯 Show educational tip during phase transition AI thinking
+    if (!newGameState.players[firstActiveIndex].isHuman) {
+      showLoadingTip(1500, feedbackLevel === 'master' ? 'advanced' : feedbackLevel === 'pro' ? 'intermediate' : 'basic');
+    }
+    
     setTimeout(() => {
       if (!newGameState.players[firstActiveIndex].isHuman) {
         const gameSnapshot = { ...newGameState };
@@ -2644,6 +2860,64 @@ const HoldemMaster = () => {
           </h1>
           <p className="text-2xl text-emerald-200 mb-4">{LANGUAGES[currentLanguage].ui.subtitle}</p>
           <p className="text-emerald-300">{LANGUAGES[currentLanguage].ui.description}</p>
+          
+          {/* 🎯 Educational Disclaimer Section */}
+          <div className="mt-8 bg-blue-900/20 backdrop-blur-sm rounded-xl p-6 border border-blue-300/30">
+            <div className="flex items-center justify-center mb-4">
+              <GraduationCap className="w-8 h-8 text-blue-300 mr-3" />
+              <h2 className="text-xl font-bold text-blue-200">📚 교육 목적 전용 플랫폼</h2>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-4 text-left">
+              <div className="bg-green-900/20 rounded-lg p-4 border border-green-400/30">
+                <h3 className="text-green-300 font-semibold mb-2 flex items-center">
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  ✅ 이 앱은 교육용입니다
+                </h3>
+                <ul className="text-green-200 text-sm space-y-1">
+                  <li>• 포커 이론과 전략 학습</li>
+                  <li>• 확률 계산 연습</li>
+                  <li>• 의사결정 능력 향상</li>
+                  <li>• 수학적 사고력 개발</li>
+                  <li>• 게임 이론 학습</li>
+                </ul>
+              </div>
+              
+              <div className="bg-red-900/20 rounded-lg p-4 border border-red-400/30">
+                <h3 className="text-red-300 font-semibold mb-2 flex items-center">
+                  <XCircle className="w-5 h-5 mr-2" />
+                  ❌ 실제 도박이 아닙니다
+                </h3>
+                <ul className="text-red-200 text-sm space-y-1">
+                  <li>• 실제 돈을 사용하지 않음</li>
+                  <li>• 가상 칩만 사용</li>
+                  <li>• 현금 지급 없음</li>
+                  <li>• 도박 유도 없음</li>
+                  <li>• 순수 학습 목적</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="mt-4 bg-yellow-900/20 rounded-lg p-4 border border-yellow-400/30">
+              <h3 className="text-yellow-300 font-semibold mb-2 flex items-center">
+                <Book className="w-5 h-5 mr-2" />
+                🎓 학습 목표 및 혜택
+              </h3>
+              <p className="text-yellow-200 text-sm leading-relaxed">
+                홀덤마스터 프로는 포커의 수학적 원리와 전략적 사고를 학습할 수 있는 교육 플랫폼입니다. 
+                AI 기반 피드백 시스템을 통해 확률 계산, 위험 관리, 의사결정 과정을 체계적으로 학습하여 
+                논리적 사고력과 수학적 분석 능력을 향상시킬 수 있습니다. 모든 칩은 가상이며, 
+                실제 가치가 없는 학습 도구로만 사용됩니다.
+              </p>
+            </div>
+            
+            <div className="mt-4 text-center">
+              <p className="text-blue-200 text-xs">
+                <AlertTriangle className="w-4 h-4 inline mr-1" />
+                만 18세 이상만 이용 가능 • 책임감 있는 학습 권장 • 실제 도박과 무관
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="mb-8">
@@ -2717,14 +2991,27 @@ const HoldemMaster = () => {
           </div>
         </div>
 
-        {/* 🚀 칩 및 금고 상태 표시 (개선됨) */}
+        {/* 🚀 칩 및 금고 상태 표시 (개선됨) - Educational Context */}
+        <div className="mb-6">
+          <div className="bg-amber-900/20 rounded-lg p-4 border border-amber-400/30 mb-4">
+            <h3 className="text-amber-300 font-semibold mb-2 flex items-center">
+              <Coins className="w-5 h-5 mr-2" />
+              🪙 가상 칩 시스템 - 학습 도구 설명
+            </h3>
+            <p className="text-amber-200 text-sm">
+              아래 칩은 모두 <strong>가상 화폐</strong>로, 실제 가치가 없는 학습 도구입니다. 
+              포커의 베팅 구조와 자금 관리를 연습하기 위한 교육용 시뮬레이션입니다.
+            </p>
+          </div>
+        </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           
           {/* 게임 칩 */}
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center">
             <Coins className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
             <div className="text-2xl font-bold">{playerStats.totalChips.toLocaleString()}</div>
-            <div className="text-sm text-emerald-200">보유 칩</div>
+            <div className="text-sm text-emerald-200">가상 칩 (학습용)</div>
           </div>
           
           {/* 금고 */}
@@ -2733,8 +3020,8 @@ const HoldemMaster = () => {
             className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105"
           >
             <Lock className="w-8 h-8 mx-auto mb-2 text-green-400" />
-            <div className="text-2xl font-bold">무료 금고</div>
-            <div className="text-sm text-emerald-200">칩 충전 & 관리</div>
+            <div className="text-2xl font-bold">학습 금고</div>
+            <div className="text-sm text-emerald-200">가상 칩 충전 (무료)</div>
           </div>
           
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center">
@@ -2778,7 +3065,26 @@ const HoldemMaster = () => {
 
         {/* 🚀 학습 모드 선택 (퍼즐 게임 추가) */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white text-center mb-8">🎮 게임 모드 선택</h2>
+          <h2 className="text-3xl font-bold text-white text-center mb-4">🎮 교육용 게임 모드</h2>
+          
+          {/* Educational Context for Game Modes */}
+          <div className="bg-indigo-900/20 rounded-lg p-4 border border-indigo-400/30 mb-6">
+            <h3 className="text-indigo-300 font-semibold mb-2 flex items-center">
+              <Brain className="w-5 h-5 mr-2" />
+              🧠 각 모드별 학습 목표
+            </h3>
+            <div className="grid md:grid-cols-3 gap-4 text-sm">
+              <div className="text-indigo-200">
+                <strong>퍼즐 모드:</strong> 빠른 의사결정과 확률 직감 향상
+              </div>
+              <div className="text-indigo-200">
+                <strong>기본 모드:</strong> 홀덤 룰과 핸드 랭킹 학습
+              </div>
+              <div className="text-indigo-200">
+                <strong>고급 모드:</strong> 전략적 사고와 GTO 이론 적용
+              </div>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
             {/* 🚀 퍼즐 게임 (특별 강조) */}
@@ -2791,11 +3097,11 @@ const HoldemMaster = () => {
               </div>
               <h3 className="text-xl font-bold mb-3 text-center">홀덤 퍼즐 🔥</h3>
               <p className="text-purple-100 mb-4 text-center text-sm leading-relaxed">
-                올인 vs 폴드 - 판단력을 테스트하고 무료 칩을 획득하세요!
+                올인 vs 폴드 - 판단력을 테스트하고 학습용 가상 칩을 획득하세요!
               </p>
               <div className="text-center">
                 <div className="inline-block bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded mb-3 font-bold">
-                  칩 획득 가능!
+                  가상 칩 획득 (학습용)
                 </div>
               </div>
               <div className="flex items-center justify-center text-purple-200 group-hover:text-white transition-colors">
@@ -3031,6 +3337,33 @@ const HoldemMaster = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* 🎯 Educational Loading Tip Overlay */}
+          {loadingTipVisible && currentLoadingTip && (
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-2xl p-8 mx-4 max-w-2xl shadow-2xl border border-blue-300/30">
+                <div className="text-center">
+                  <div className="text-4xl mb-4">{currentLoadingTip.icon}</div>
+                  <div className="flex items-center justify-center mb-4">
+                    <Brain className="w-6 h-6 text-blue-200 mr-2" />
+                    <span className="text-blue-200 text-sm font-medium">{currentLoadingTip.category}</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4">{currentLoadingTip.title}</h3>
+                  <p className="text-blue-100 text-lg leading-relaxed mb-6">{currentLoadingTip.tip}</p>
+                  
+                  {/* AI thinking indicator */}
+                  <div className="flex items-center justify-center gap-3 text-blue-200">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-blue-300 rounded-full animate-pulse" style={{animationDelay: '0ms'}}></div>
+                      <div className="w-2 h-2 bg-blue-300 rounded-full animate-pulse" style={{animationDelay: '150ms'}}></div>
+                      <div className="w-2 h-2 bg-blue-300 rounded-full animate-pulse" style={{animationDelay: '300ms'}}></div>
+                    </div>
+                    <span className="text-sm">AI가 판단하는 동안 학습하세요</span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -3280,8 +3613,11 @@ const HoldemMaster = () => {
       {currentView === 'blog' && <BlogSection />}
       {currentView === 'faq' && <FAQ />}
       {currentView === 'glossary' && <PokerGlossary />}
+      {currentView === 'privacy' && <PrivacyPolicy />}
+      {currentView === 'terms' && <TermsOfService />}
+      {currentView === 'responsible' && <ResponsibleGaming />}
       
-      🚀 금고 시스템 모달
+      {/* 🚀 금고 시스템 모달 */}
       <VaultSystem
         isOpen={showVaultModal}
         onClose={() => setShowVaultModal(false)}
