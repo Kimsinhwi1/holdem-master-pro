@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Home, BookOpen, HelpCircle, Book, Gamepad2, GraduationCap, ChevronDown } from 'lucide-react';
+import { Menu, X, Home, BookOpen, HelpCircle, Book, Gamepad2, GraduationCap, ChevronDown, Shield, Scale, Heart } from 'lucide-react';
 
 /**
  * 메인 네비게이션 컴포넌트
@@ -14,7 +14,7 @@ const Navigation = ({
   isGameActive = false 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showLearningDropdown, setShowLearningDropdown] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const navigationItems = [
     {
@@ -62,12 +62,41 @@ const Navigation = ({
       label: currentLanguage === 'ko' ? '용어사전' : 'Glossary',
       icon: BookOpen,
       view: 'glossary'
+    },
+    {
+      id: 'legal',
+      label: currentLanguage === 'ko' ? '법적 정보' : 'Legal',
+      icon: Scale,
+      hasDropdown: true,
+      dropdownItems: [
+        {
+          id: 'privacy',
+          label: currentLanguage === 'ko' ? '개인정보 보호정책' : 'Privacy Policy',
+          icon: Shield,
+          view: 'privacy',
+          description: currentLanguage === 'ko' ? '개인정보 처리 방침' : 'How we handle your data'
+        },
+        {
+          id: 'terms',
+          label: currentLanguage === 'ko' ? '서비스 이용약관' : 'Terms of Service',
+          icon: Scale,
+          view: 'terms',
+          description: currentLanguage === 'ko' ? '서비스 이용 규칙' : 'Service usage rules'
+        },
+        {
+          id: 'responsible',
+          label: currentLanguage === 'ko' ? '책임감 있는 학습' : 'Responsible Learning',
+          icon: Heart,
+          view: 'responsible',
+          description: currentLanguage === 'ko' ? '건전한 학습 가이드' : 'Safe learning guidelines'
+        }
+      ]
     }
   ];
 
   const handleNavClick = (view, item) => {
     if (item.hasDropdown) {
-      setShowLearningDropdown(!showLearningDropdown);
+      setActiveDropdown(activeDropdown === item.id ? null : item.id);
       return;
     }
     
@@ -75,12 +104,12 @@ const Navigation = ({
     if (item.id === 'game' && onStartGame) {
       onStartGame('probability'); // 기본 모드
       setIsOpen(false);
-      setShowLearningDropdown(false);
+      setActiveDropdown(null);
       return;
     }
     
     setIsOpen(false);
-    setShowLearningDropdown(false);
+    setActiveDropdown(null);
     onViewChange(view);
   };
 
