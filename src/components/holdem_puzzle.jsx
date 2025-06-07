@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Puzzle, RefreshCw, Trophy, Target, Brain, Zap } from 'lucide-react';
 
-// 🎯 홀덤 퍼즐 게임 컴포넌트
+// 🎯 홀덤 퍼즐 게임 컴포넌트 (localStorage 문제 해결)
 const HoldemPuzzle = ({ onClose, onChipReward }) => {
   const [gameState, setGameState] = useState({
     myCards: [],
@@ -12,26 +12,33 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
     showOpponentCards: false
   });
   
-  const [stats, setStats] = useState(() => {
-    try {
-      const saved = localStorage.getItem('holdemPuzzleStats');
-      return saved ? JSON.parse(saved) : { total: 0, correct: 0, streak: 0, bestStreak: 0 };
-    } catch {
-      return { total: 0, correct: 0, streak: 0, bestStreak: 0 };
-    }
+  // localStorage 대신 React state 사용
+  const [stats, setStats] = useState({ 
+    total: 0, 
+    correct: 0, 
+    streak: 0, 
+    bestStreak: 0 
   });
 
   // 카드 관련 상수
   const SUITS = ['♠', '♥', '♦', '♣'];
   const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-  const RANK_VALUES = {'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14};
+  const RANK_VALUES = {
+    '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, 
+    '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14
+  };
 
   // 덱 생성 및 셔플
   const createDeck = () => {
     const deck = [];
     SUITS.forEach(suit => {
       RANKS.forEach(rank => {
-        deck.push({ suit, rank, value: RANK_VALUES[rank], id: `${suit}${rank}` });
+        deck.push({ 
+          suit, 
+          rank, 
+          value: RANK_VALUES[rank], 
+          id: `${suit}${rank}` 
+        });
       });
     });
     return shuffleDeck(deck);
@@ -48,7 +55,9 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
 
   // 핸드 평가 시스템
   const evaluateHand = (cards) => {
-    if (cards.length < 5) return { rank: 0, name: 'Incomplete', highlightedCards: [] };
+    if (!cards || cards.length < 5) {
+      return { rank: 0, name: 'Incomplete', highlightedCards: [], strength: 0 };
+    }
     
     const sorted = [...cards].sort((a, b) => b.value - a.value);
     const suits = {};
@@ -57,7 +66,9 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
     const rankCards = {};
     
     // 카드 분석
-    sorted.forEach((card, index) => {
+    sorted.forEach((card) => {
+      if (!card || !card.suit || !card.value) return;
+      
       suits[card.suit] = (suits[card.suit] || 0) + 1;
       ranks[card.value] = (ranks[card.value] || 0) + 1;
       
@@ -93,7 +104,7 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
         isStraight = true;
         for (let j = i; j < i + 5; j++) {
           const rank = uniqueRanks[j];
-          const cardIndex = cards.findIndex(card => card.value === rank);
+          const cardIndex = cards.findIndex(card => card && card.value === rank);
           if (cardIndex !== -1) straightCards.push(cardIndex);
         }
         break;
@@ -106,7 +117,7 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
       isStraight = true;
       straightCards = [];
       [14, 5, 4, 3, 2].forEach(rank => {
-        const cardIndex = cards.findIndex(card => card.value === rank);
+        const cardIndex = cards.findIndex(card => card && card.value === rank);
         if (cardIndex !== -1) straightCards.push(cardIndex);
       });
     }
@@ -181,6 +192,8 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
 
   // 핸드 비교
   const compareHands = (myCards, opponentCards, communityCards) => {
+    if (!myCards || !opponentCards || !communityCards) return 0;
+    
     const myAllCards = [...myCards, ...communityCards];
     const opponentAllCards = [...opponentCards, ...communityCards];
     
@@ -193,12 +206,12 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
   };
 
   // 카드 렌더링
-  const renderCard = (card, isHidden = false, isHighlighted = false, cardId = '') => {
+  const renderCard = (card, isHidden = false, isHighlighted = false) => {
     if (!card && !isHidden) {
-      return <div className="w-16 h-24 border-2 border-dashed border-gray-400 rounded-lg bg-gray-100"></div>;
+      return (
+        <div className="w-16 h-24 border-2 border-dashed border-gray-400 rounded-lg bg-gray-100"></div>
+      );
     }
-    
-    const isRed = card?.suit === '♥' || card?.suit === '♦';
     
     if (isHidden) {
       return (
@@ -208,17 +221,19 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
       );
     }
     
+    const isRed = card?.suit === '♥' || card?.suit === '♦';
+    
     return (
       <div className={`w-16 h-24 bg-white rounded-lg border-2 flex flex-col items-center justify-center font-bold shadow-lg transform transition-all duration-300 hover:scale-105 ${
         isHighlighted 
-          ? 'border-yellow-400 bg-gradient-to-br from-yellow-100 to-yellow-200 shadow-yellow-400/50 scale-110 z-10 animate-pulse' 
+          ? 'border-yellow-400 bg-gradient-to-br from-yellow-100 to-yellow-200 shadow-yellow-400/50 scale-110 z-10' 
           : 'border-gray-300'
       }`}>
         <div className={`text-lg ${isRed ? 'text-red-600' : 'text-black'}`}>
-          {card.rank}
+          {card?.rank || '?'}
         </div>
         <div className={`text-xl ${isRed ? 'text-red-600' : 'text-black'}`}>
-          {card.suit}
+          {card?.suit || '?'}
         </div>
       </div>
     );
@@ -226,85 +241,112 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
 
   // 새 게임 시작
   const startNewGame = () => {
-    const deck = createDeck();
-    setGameState({
-      myCards: [deck[0], deck[1]],
-      communityCards: [deck[2], deck[3], deck[4], deck[5], deck[6]],
-      opponentCards: [deck[7], deck[8]],
-      gameActive: true,
-      result: null,
-      showOpponentCards: false
-    });
+    try {
+      const deck = createDeck();
+      if (deck.length >= 9) {
+        setGameState({
+          myCards: [deck[0], deck[1]],
+          communityCards: [deck[2], deck[3], deck[4], deck[5], deck[6]],
+          opponentCards: [deck[7], deck[8]],
+          gameActive: true,
+          result: null,
+          showOpponentCards: false
+        });
+      }
+    } catch (error) {
+      console.error('게임 시작 중 오류:', error);
+    }
   };
 
   // 결정 처리
   const makeDecision = (decision) => {
     if (!gameState.gameActive) return;
     
-    const handResult = compareHands(gameState.myCards, gameState.opponentCards, gameState.communityCards);
-    let isCorrect = false;
-    let resultText = '';
-    let resultClass = '';
-    
-    if (handResult > 0) {
-      isCorrect = (decision === 'allin');
-      resultText = isCorrect ? 
-        '🎉 정답! 당신이 이겼고 올인이 정답이었습니다!' : 
-        '❌ 아쉽네요. 당신이 이겼는데 폴드하셨네요.';
-      resultClass = isCorrect ? 'win' : 'lose';
-    } else if (handResult < 0) {
-      isCorrect = (decision === 'fold');
-      resultText = isCorrect ? 
-        '🎉 정답! 당신이 졌지만 폴드로 손실을 줄였습니다!' : 
-        '❌ 아쉽네요. 당신이 졌는데 올인하셨네요.';
-      resultClass = isCorrect ? 'win' : 'lose';
-    } else {
-      isCorrect = true;
-      resultText = '🤝 무승부! 어떤 선택이든 정답이었습니다.';
-      resultClass = 'win';
-    }
-    
-    // 통계 업데이트
-    const newStats = {
-      total: stats.total + 1,
-      correct: stats.correct + (isCorrect ? 1 : 0),
-      streak: isCorrect ? stats.streak + 1 : 0,
-      bestStreak: Math.max(stats.bestStreak, isCorrect ? stats.streak + 1 : stats.streak)
-    };
-    
-    setStats(newStats);
-    localStorage.setItem('holdemPuzzleStats', JSON.stringify(newStats));
-    
-    // 보상 계산
-    if (isCorrect) {
-      let reward = 500; // 기본 보상
-      if (newStats.streak >= 5) reward += 1000; // 5연속 보너스
-      if (newStats.streak >= 10) reward += 2000; // 10연속 보너스
-      onChipReward?.(reward);
-    }
-    
-    // 핸드 분석
-    const myHand = evaluateHand([...gameState.myCards, ...gameState.communityCards]);
-    const opponentHand = evaluateHand([...gameState.opponentCards, ...gameState.communityCards]);
-    
-    setGameState(prev => ({
-      ...prev,
-      gameActive: false,
-      showOpponentCards: true,
-      result: {
-        isCorrect,
-        text: resultText,
-        class: resultClass,
-        myHand,
-        opponentHand,
-        reward: isCorrect ? (newStats.streak >= 5 ? 1500 : 500) : 0
+    try {
+      const handResult = compareHands(
+        gameState.myCards, 
+        gameState.opponentCards, 
+        gameState.communityCards
+      );
+      
+      let isCorrect = false;
+      let resultText = '';
+      let resultClass = '';
+      
+      if (handResult > 0) {
+        isCorrect = (decision === 'allin');
+        resultText = isCorrect ? 
+          '🎉 정답! 당신이 이겼고 올인이 정답이었습니다!' : 
+          '❌ 아쉽네요. 당신이 이겼는데 폴드하셨네요.';
+        resultClass = isCorrect ? 'win' : 'lose';
+      } else if (handResult < 0) {
+        isCorrect = (decision === 'fold');
+        resultText = isCorrect ? 
+          '🎉 정답! 당신이 졌지만 폴드로 손실을 줄였습니다!' : 
+          '❌ 아쉽네요. 당신이 졌는데 올인하셨네요.';
+        resultClass = isCorrect ? 'win' : 'lose';
+      } else {
+        isCorrect = true;
+        resultText = '🤝 무승부! 어떤 선택이든 정답이었습니다.';
+        resultClass = 'win';
       }
-    }));
+      
+      // 통계 업데이트 (메모리에만 저장)
+      const newStats = {
+        total: stats.total + 1,
+        correct: stats.correct + (isCorrect ? 1 : 0),
+        streak: isCorrect ? stats.streak + 1 : 0,
+        bestStreak: Math.max(stats.bestStreak, isCorrect ? stats.streak + 1 : stats.streak)
+      };
+      
+      setStats(newStats);
+      
+      // 보상 계산
+      let reward = 0;
+      if (isCorrect) {
+        reward = 500; // 기본 보상
+        if (newStats.streak >= 5) reward += 1000; // 5연속 보너스
+        if (newStats.streak >= 10) reward += 2000; // 10연속 보너스
+        
+        // 부모 컴포넌트에 보상 전달
+        if (onChipReward && typeof onChipReward === 'function') {
+          onChipReward(reward);
+        }
+      }
+      
+      // 핸드 분석
+      const myHand = evaluateHand([...gameState.myCards, ...gameState.communityCards]);
+      const opponentHand = evaluateHand([...gameState.opponentCards, ...gameState.communityCards]);
+      
+      setGameState(prev => ({
+        ...prev,
+        gameActive: false,
+        showOpponentCards: true,
+        result: {
+          isCorrect,
+          text: resultText,
+          class: resultClass,
+          myHand,
+          opponentHand,
+          reward
+        }
+      }));
+    } catch (error) {
+      console.error('결정 처리 중 오류:', error);
+    }
   };
 
+  // 컴포넌트 마운트 시 게임 시작
   useEffect(() => {
     startNewGame();
   }, []);
+
+  // 닫기 버튼 핸들러
+  const handleClose = () => {
+    if (onClose && typeof onClose === 'function') {
+      onClose();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 p-4">
@@ -315,7 +357,7 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -382,7 +424,11 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
               {gameState.myCards.map((card, idx) => {
                 const myHand = evaluateHand([...gameState.myCards, ...gameState.communityCards]);
                 const isHighlighted = myHand.highlightedCards && myHand.highlightedCards.includes(idx);
-                return renderCard(card, false, isHighlighted, `my-card-${idx}`);
+                return (
+                  <div key={`my-card-${idx}`}>
+                    {renderCard(card, false, isHighlighted)}
+                  </div>
+                );
               })}
             </div>
           </div>
@@ -397,7 +443,11 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
                 const myHand = evaluateHand([...gameState.myCards, ...gameState.communityCards]);
                 const cardIndex = idx + 2; // 내 카드 2장 다음 인덱스
                 const isHighlighted = myHand.highlightedCards && myHand.highlightedCards.includes(cardIndex);
-                return renderCard(card, false, isHighlighted, `community-card-${idx}`);
+                return (
+                  <div key={`community-card-${idx}`}>
+                    {renderCard(card, false, isHighlighted)}
+                  </div>
+                );
               })}
             </div>
             
@@ -411,7 +461,9 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
                   <div className="w-48 bg-gray-600 rounded-full h-3 mt-2">
                     <div 
                       className="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-3 rounded-full transition-all duration-500"
-                      style={{ width: `${evaluateHand([...gameState.myCards, ...gameState.communityCards]).strength}%` }}
+                      style={{ 
+                        width: `${evaluateHand([...gameState.myCards, ...gameState.communityCards]).strength}%` 
+                      }}
                     ></div>
                   </div>
                   <div className="text-white text-sm mt-1">
@@ -432,12 +484,18 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
                 gameState.opponentCards.map((card, idx) => {
                   const opponentHand = evaluateHand([...gameState.opponentCards, ...gameState.communityCards]);
                   const isHighlighted = opponentHand.highlightedCards && opponentHand.highlightedCards.includes(idx);
-                  return renderCard(card, false, isHighlighted, `opponent-card-${idx}`);
+                  return (
+                    <div key={`opponent-card-${idx}`}>
+                      {renderCard(card, false, isHighlighted)}
+                    </div>
+                  );
                 })
               ) : (
-                gameState.opponentCards.map((_, idx) => 
-                  renderCard(null, true, false, `opponent-hidden-${idx}`)
-                )
+                gameState.opponentCards.map((_, idx) => (
+                  <div key={`opponent-hidden-${idx}`}>
+                    {renderCard(null, true, false)}
+                  </div>
+                ))
               )}
             </div>
           </div>
@@ -481,13 +539,21 @@ const HoldemPuzzle = ({ onClose, onChipReward }) => {
                 <div className="grid md:grid-cols-2 gap-6 text-white">
                   <div className="bg-white/10 rounded-lg p-4">
                     <h5 className="font-bold mb-3 text-blue-300">내 핸드</h5>
-                    <div className="text-yellow-400 text-lg font-bold">{gameState.result.myHand.name}</div>
-                    <div className="text-sm opacity-80">강도: {gameState.result.myHand.strength}%</div>
+                    <div className="text-yellow-400 text-lg font-bold">
+                      {gameState.result.myHand?.name || '알 수 없음'}
+                    </div>
+                    <div className="text-sm opacity-80">
+                      강도: {gameState.result.myHand?.strength || 0}%
+                    </div>
                   </div>
                   <div className="bg-white/10 rounded-lg p-4">
                     <h5 className="font-bold mb-3 text-red-300">상대 핸드</h5>
-                    <div className="text-yellow-400 text-lg font-bold">{gameState.result.opponentHand.name}</div>
-                    <div className="text-sm opacity-80">강도: {gameState.result.opponentHand.strength}%</div>
+                    <div className="text-yellow-400 text-lg font-bold">
+                      {gameState.result.opponentHand?.name || '알 수 없음'}
+                    </div>
+                    <div className="text-sm opacity-80">
+                      강도: {gameState.result.opponentHand?.strength || 0}%
+                    </div>
                   </div>
                 </div>
               </div>
