@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, BookOpen, Filter, Hash, Shuffle, DollarSign, Users, Target, TrendingUp, Brain, Zap, Award, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Search, BookOpen, Filter, Hash, Shuffle, DollarSign, Users, Target, TrendingUp, Brain, Zap, Award, AlertTriangle, CheckCircle, Calculator, PieChart, Trophy, Clock } from 'lucide-react';
 
 /**
  * 홀덤마스터 프로 - 완전한 포커 용어사전
