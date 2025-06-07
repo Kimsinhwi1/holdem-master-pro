@@ -171,7 +171,7 @@ const Navigation = ({
                   </button>
                   
                   {/* 드롭다운 메뉴 */}
-                  {item.hasDropdown && showLearningDropdown && (
+                  {item.hasDropdown && activeDropdown === item.id && (
                     <div className="absolute top-full left-0 mt-2 bg-white rounded-xl shadow-xl py-2 min-w-64 border border-gray-200">
                       {item.dropdownItems.map((dropdownItem) => {
                         const DropdownIcon = dropdownItem.icon;
@@ -240,13 +240,13 @@ const Navigation = ({
                         <span className="font-medium">{item.label}</span>
                         {item.hasDropdown && (
                           <ChevronDown className={`w-4 h-4 ml-auto transition-transform ${
-                            showLearningDropdown ? 'rotate-180' : ''
+                            activeDropdown === item.id ? 'rotate-180' : ''
                           }`} />
                         )}
                       </button>
                       
                       {/* 모바일 드롭다운 */}
-                      {item.hasDropdown && showLearningDropdown && (
+                      {item.hasDropdown && activeDropdown === item.id && (
                         <div className="ml-4 mt-2 space-y-1">
                           {item.dropdownItems.map((dropdownItem) => {
                             const DropdownIcon = dropdownItem.icon;
