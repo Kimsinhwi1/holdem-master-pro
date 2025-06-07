@@ -159,13 +159,13 @@ const Navigation = ({
                         ? 'bg-white text-gray-900 shadow-lg' 
                         : 'text-white hover:bg-white/20'
                     }`}
-                    aria-expanded={item.hasDropdown ? showLearningDropdown : undefined}
+                    aria-expanded={item.hasDropdown ? activeDropdown === item.id : undefined}
                   >
                     <IconComponent className="w-4 h-4" />
                     <span className="font-medium">{item.label}</span>
                     {item.hasDropdown && (
                       <ChevronDown className={`w-4 h-4 transition-transform ${
-                        showLearningDropdown ? 'rotate-180' : ''
+                        activeDropdown === item.id ? 'rotate-180' : ''
                       }`} />
                     )}
                   </button>
