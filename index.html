@@ -182,7 +182,12 @@
   </script>
   -->
   
-  <!-- 🎨 기존 CSS 프레임워크 (유지) -->
+  <!-- 🎨 Tailwind CSS (프로덕션 경고 비활성화) -->
+  <script>
+    // Tailwind 프로덕션 경고 비활성화
+    window.tailwindcss = { corePlugins: { preflight: false } };
+    console.warn = function() {}; // Tailwind 경고 무시
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- 💰 Google AdSense (단일 설정) -->
