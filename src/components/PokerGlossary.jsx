@@ -454,11 +454,257 @@ const glossaryData = [
     frequency: "medium"
   },
 
-  // 계속해서 더 많은 용어들 추가... 
-  // (실제로는 100개 이상까지 확장 가능)
+  // === 더 많은 고급 용어들 ===
+  {
+    id: 34,
+    term: "도네이션 (Donation)",
+    english: "Donation",
+    category: "심리",
+    definition: "약한 핸드로 불필요한 베팅이나 콜을 하여 칩을 잃는 행위.",
+    detailed: "도네이션은 주로 감정적인 플레이나 잘못된 판단으로 인해 발생합니다. 상대에게 불필요하게 칩을 주는 것과 같아서 이런 이름이 붙었습니다.",
+    example: "72o로 프리플롭 콜을 하거나, 명백히 비트당한 상황에서 콜을 계속하는 것이 도네이션입니다.",
+    tips: "도네이션을 줄이려면: 1) 핸드 선택 강화 2) 포지션 인식 3) 상대 레인지 고려 4) 감정 조절",
+    icon: DollarSign,
+    difficulty: "중급",
+    frequency: "medium"
+  },
+
+  // === 포지션 심화 ===
+  {
+    id: 35,
+    term: "하이잭 (Hijack)",
+    english: "Hijack",
+    category: "포지션",
+    definition: "컷오프 바로 앞 포지션. 6인 테이블에서 UTG+1에 해당.",
+    detailed: "하이잭은 중간 포지션으로, 어느 정도 공격적으로 플레이할 수 있지만 여전히 주의가 필요한 자리입니다.",
+    example: "하이잭에서 K10s로 레이즈하여 블라인드를 스틸하거나, 타이트한 플레이어들을 압박할 수 있습니다.",
+    tips: "하이잭에서는 약 20-25%의 핸드로 오픈할 수 있습니다.",
+    icon: Users,
+    difficulty: "중급",
+    frequency: "medium"
+  },
+
+  {
+    id: 36,
+    term: "어얼리 포지션 (Early Position)",
+    english: "Early Position",
+    category: "포지션",
+    definition: "UTG와 UTG+1을 포함하는 초기 포지션들.",
+    detailed: "어얼리 포지션은 정보가 부족한 상태에서 액션해야 하므로 가장 타이트한 레인지로 플레이해야 합니다.",
+    example: "어얼리 포지션에서는 AA, KK, QQ, AK 같은 프리미엄 핸드만 레이즈하는 것이 안전합니다.",
+    tips: "어얼리 포지션에서는 8-12% 정도의 매우 타이트한 레인지를 유지하세요.",
+    icon: AlertTriangle,
+    difficulty: "초급",
+    frequency: "high"
+  },
+
+  // === 베팅 패턴과 사이징 ===
+  {
+    id: 37,
+    term: "리드 (Lead)",
+    english: "Lead",
+    category: "전략",
+    definition: "프리플롭 콜러가 플롭에서 첫 번째로 베팅하는 것.",
+    detailed: "리드는 이니셔티브를 가져오고 상대방을 수비적인 위치에 놓는 전략입니다. 강한 핸드나 좋은 드로우로 사용됩니다.",
+    example: "UTG 레이즈에 버튼에서 콜한 후, 플롭에서 먼저 베팅하는 것이 리드입니다.",
+    tips: "리드는 상대의 c-bet 빈도가 낮거나, 자신의 핸드가 특히 강할 때 효과적입니다.",
+    icon: TrendingUp,
+    difficulty: "고급",
+    frequency: "low"
+  },
+
+  {
+    id: 38,
+    term: "머지 베팅 (Merge Betting)",
+    english: "Merge Betting",
+    category: "전략",
+    definition: "중간 강도의 핸드로 밸류와 보호를 동시에 노리는 베팅.",
+    detailed: "머지 베팅은 탑 페어나 투 페어 같은 핸드로, 더 약한 핸드로부터 밸류를 얻으면서 동시에 드로우로부터 보호하는 전략입니다.",
+    example: "A7 보드에서 AQ로 베팅하여 Ax 핸드들로부터 밸류를 얻고 스트레이트 드로우를 보호합니다.",
+    tips: "머지 베팅은 상대 레인지가 넓고 많은 약한 핸드를 포함할 때 효과적입니다.",
+    icon: Target,
+    difficulty: "고급",
+    frequency: "medium"
+  },
+
+  // === 수학 심화 ===
+  {
+    id: 39,
+    term: "EV (Expected Value)",
+    english: "Expected Value",
+    category: "수학",
+    definition: "특정 플레이의 기대값. 장기적으로 얻거나 잃을 것으로 예상되는 평균 금액.",
+    detailed: "EV는 각 가능한 결과에 그 확률을 곱한 값들의 합으로 계산됩니다. 플러스 EV 플레이를 지속하는 것이 수익의 핵심입니다.",
+    example: "50% 확률로 $100을 얻고 50% 확률로 $80을 잃는 플레이의 EV는 +$10입니다.",
+    tips: "EV 계산: Σ(결과 × 확률). 항상 플러스 EV 결정을 내리도록 노력하세요.",
+    icon: Calculator,
+    difficulty: "고급",
+    frequency: "high"
+  },
+
+  {
+    id: 40,
+    term: "에퀴티 (Equity)",
+    english: "Equity",
+    category: "수학",
+    definition: "현재 핸드가 팟에서 차지하는 지분. 승률과 같은 의미.",
+    detailed: "에퀴티는 모든 가능한 결과를 고려했을 때 자신의 핸드가 이길 확률입니다. 팟의 크기에 에퀴티를 곱하면 자신의 몫을 계산할 수 있습니다.",
+    example: "AA vs KK 프리플롭에서 AA의 에퀴티는 약 80%입니다.",
+    tips: "에퀴티를 정확히 계산하려면 상대의 레인지를 먼저 추정해야 합니다.",
+    icon: PieChart,
+    difficulty: "중급",
+    frequency: "high"
+  },
+
+  // === 토너먼트 용어 ===
+  {
+    id: 41,
+    term: "ICM (Independent Chip Model)",
+    english: "ICM",
+    category: "토너먼트",
+    definition: "토너먼트에서 칩의 실제 가치를 계산하는 수학적 모델.",
+    detailed: "ICM은 현재 칩 스택과 상금 구조를 바탕으로 각 플레이어의 기대 상금을 계산합니다. 토너먼트 후반에서 특히 중요합니다.",
+    example: "버블 상황에서 칩이 많을수록 한 개의 칩 가치가 줄어들어 더 보수적으로 플레이해야 합니다.",
+    tips: "ICM을 고려하면 리스크가 큰 상황에서 더 보수적인 결정을 내리게 됩니다.",
+    icon: Trophy,
+    difficulty: "고급",
+    frequency: "low"
+  },
+
+  {
+    id: 42,
+    term: "버블 (Bubble)",
+    english: "Bubble",
+    category: "토너먼트",
+    definition: "토너먼트에서 상금권 진입 직전 상황.",
+    detailed: "버블에서는 한 명만 탈락하면 나머지 모든 플레이어가 상금을 받게 됩니다. 이때 플레이 스타일이 크게 달라집니다.",
+    example: "100명 토너먼트에서 상위 15명이 상금을 받는다면, 16명이 남았을 때가 버블입니다.",
+    tips: "버블에서는 ICM을 고려해 더 타이트하게 플레이하거나, 상대의 타이트함을 공략하세요.",
+    icon: AlertTriangle,
+    difficulty: "중급",
+    frequency: "medium"
+  },
+
+  // === GTO 관련 ===
+  {
+    id: 43,
+    term: "밸런스 (Balance)",
+    english: "Balance",
+    category: "고급이론",
+    definition: "블러프와 밸류를 적절한 비율로 섞어 상대가 착취하기 어렵게 만드는 전략.",
+    detailed: "밸런스는 GTO 전략의 핵심입니다. 같은 액션을 밸류 핸드와 블러프 핸드로 모두 할 수 있어야 합니다.",
+    example: "리버에서 베팅할 때 70% 밸류, 30% 블러프 비율을 유지하면 상대가 수학적으로 착취하기 어렵습니다.",
+    tips: "완벽한 밸런스보다는 상대의 약점을 파악해 익스플로잇하는 것이 실전에서 더 수익적일 수 있습니다.",
+    icon: Brain,
+    difficulty: "고급",
+    frequency: "low"
+  },
+
+  {
+    id: 44,
+    term: "노드락 (Node Lock)",
+    english: "Node Lock",
+    category: "고급이론",
+    definition: "상대방의 특정 실수를 파악하고 그에 대응하여 전략을 조정하는 것.",
+    detailed: "노드락은 상대가 어떤 상황에서 체계적으로 실수한다는 것을 알았을 때, 그 실수를 최대한 활용하도록 전략을 바꾸는 것입니다.",
+    example: "상대가 c-bet에 너무 자주 폴드한다면, 더 많은 핸드로 c-bet을 할 수 있습니다.",
+    tips: "노드락을 위해서는 상대방의 패턴을 주의깊게 관찰하고 기록해야 합니다.",
+    icon: Target,
+    difficulty: "고급",
+    frequency: "low"
+  },
+
+  // === 드로우 심화 ===
+  {
+    id: 45,
+    term: "백도어 드로우 (Backdoor Draw)",
+    english: "Backdoor Draw",
+    category: "드로우",
+    definition: "턴과 리버에서 모두 맞아야 완성되는 드로우.",
+    detailed: "백도어 드로우는 약 4% 확률로 완성됩니다. 주요 드로우에 추가적인 아웃츠를 제공하여 핸드의 가치를 높입니다.",
+    example: "A♠7♠를 가지고 플롭이 K♥9♠2♦일 때, 백도어 플러시 드로우가 있습니다.",
+    tips: "백도어 드로우만으로는 공격적으로 플레이하기 어렵지만, 다른 요소와 결합하면 가치가 있습니다.",
+    icon: Shuffle,
+    difficulty: "중급",
+    frequency: "medium"
+  },
+
+  {
+    id: 46,
+    term: "너트 드로우 (Nut Draw)",
+    english: "Nut Draw",
+    category: "드로우",
+    definition: "완성되면 너츠 핸드가 되는 드로우.",
+    detailed: "너트 드로우는 완성될 경우 가장 강한 핸드가 되므로 매우 공격적으로 플레이할 수 있습니다.",
+    example: "A♠K♠를 가지고 플롭이 Q♠J♠2♥일 때, 너트 플러시 드로우와 브로드웨이 스트레이트 드로우가 있습니다.",
+    tips: "너트 드로우는 세미블러프에 이상적이며, 때로는 올인도 고려할 수 있습니다.",
+    icon: Award,
+    difficulty: "중급",
+    frequency: "medium"
+  },
+
+  // === 플레이어 타입 ===
+  {
+    id: 47,
+    term: "TAG (Tight Aggressive)",
+    english: "TAG",
+    category: "플레이어타입",
+    definition: "타이트하게 핸드를 선택하지만 플레이할 때는 공격적인 플레이어.",
+    detailed: "TAG는 가장 수익적인 플레이 스타일 중 하나입니다. 좋은 핸드로만 플레이하되, 플레이할 때는 베팅과 레이즈를 통해 주도권을 가져갑니다.",
+    example: "프리플롭에서 15% 정도의 핸드만 플레이하지만, 플레이할 때는 대부분 레이즈로 들어갑니다.",
+    tips: "TAG 스타일을 마스터하는 것이 포커 실력 향상의 첫 단계입니다.",
+    icon: Users,
+    difficulty: "초급",
+    frequency: "high"
+  },
+
+  {
+    id: 48,
+    term: "LAG (Loose Aggressive)",
+    english: "LAG",
+    category: "플레이어타입",
+    definition: "많은 핸드를 플레이하면서도 공격적인 플레이어.",
+    detailed: "LAG는 고급 플레이어들이 사용하는 스타일로, 포지션과 상대방을 잘 읽는 능력이 필요합니다. 잘못 사용하면 큰 손실을 볼 수 있습니다.",
+    example: "25-30%의 핸드를 플레이하지만 대부분 레이즈로 들어가며, 포지션을 최대한 활용합니다.",
+    tips: "LAG 스타일은 충분한 경험과 기술이 쌓인 후에 시도하세요.",
+    icon: Zap,
+    difficulty: "고급",
+    frequency: "medium"
+  },
+
+  // === 베팅 라인과 라인 체크 ===
+  {
+    id: 49,
+    term: "체크 비하인드 (Check Behind)",
+    english: "Check Behind",
+    category: "전략",
+    definition: "상대방이 체크했을 때 자신도 체크하는 것.",
+    detailed: "체크 비하인드는 팟 컨트롤, 블러프 인듀스, 또는 약한 핸드로 무료 카드를 보기 위해 사용됩니다.",
+    example: "버튼에서 A-J를 가지고 있고 블라인드가 체크했을 때, 미들 페어로 체크 비하인드할 수 있습니다.",
+    tips: "체크 비하인드는 상대의 체크 레이즈를 피하고 포트 사이즈를 조절하는 효과적인 방법입니다.",
+    icon: CheckCircle,
+    difficulty: "중급",
+    frequency: "high"
+  },
+
+  {
+    id: 50,
+    term: "스로우 플레이 (Slow Play)",
+    english: "Slow Play",
+    category: "전략",
+    definition: "강한 핸드를 가지고도 체크나 콜만 하여 약해 보이게 하는 전략.",
+    detailed: "스로우 플레이는 상대방이 블러프하거나 더 약한 핸드로 베팅하도록 유도하기 위해 사용됩니다. 하지만 무료 카드를 주는 위험이 있습니다.",
+    example: "플롭에서 셋을 만들었지만 체크하여 상대방이 블러프하도록 유도합니다.",
+    tips: "스로우 플레이는 드로우가 적은 드라이 보드에서만 고려하세요.",
+    icon: Clock,
+    difficulty: "중급",
+    frequency: "low"
+  }
+
+  // === 추가로 50개 이상 더 확장 가능 ===
 ];
 
-const categories = ["전체", "액션", "베팅", "핸드", "포지션", "전략", "수학", "게임진행", "자금관리", "드로우", "심리"];
+const categories = ["전체", "액션", "베팅", "핸드", "포지션", "전략", "수학", "게임진행", "자금관리", "드로우", "심리", "고급이론", "플레이어타입", "토너먼트"];
 const difficulties = ["전체", "초급", "중급", "고급"];
 const frequencies = ["전체", "high", "medium", "low"];
 
