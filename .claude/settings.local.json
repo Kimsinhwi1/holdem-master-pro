@@ -40,7 +40,8 @@
       "Bash(git push:*)",
       "Bash(git config:*)",
       "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -n \"setTimeout|loading|thinking|processing|AI.*decision|delay|wait\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
-      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 10 -B 2 \"renderGameView|game.*table|poker.*table|main.*game\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)"
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg -A 10 -B 2 \"renderGameView|game.*table|poker.*table|main.*game\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx)",
+      "Bash(/home/th2801/.npm-global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg \"게임 모드|학습 목표\" /mnt/c/Users/User/poker-master-pro/src/ProPokerMaster.jsx -n)"
     ],
     "deny": []
   },
