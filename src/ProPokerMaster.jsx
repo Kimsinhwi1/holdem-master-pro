@@ -3125,7 +3125,7 @@ const HoldemMaster = () => {
         };
       case 'game':
         return {
-          title: `${selectedMode ? LEARNING_MODES[selectedMode]?.name : '포커'} 학습`,
+          title: `${selectedMode ? LEARNING_MODES[selectedMode]?.name[currentLanguage] : (currentLanguage === 'ko' ? '포커' : 'Poker')} ${currentLanguage === 'ko' ? '학습' : 'Learning'}`,
           description: 'AI와 함께하는 실시간 포커 학습! 체계적인 피드백과 함께 실전에서 포커 실력을 향상시키세요.'
         };
       default:
@@ -3581,7 +3581,7 @@ const HoldemMaster = () => {
                     </div>
                   )}
                   <span className="text-white text-sm font-semibold">
-                    {LEARNING_MODES[selectedMode] ? LEARNING_MODES[selectedMode].name : 'Unknown Mode'}
+                    {LEARNING_MODES[selectedMode] ? LEARNING_MODES[selectedMode].name[currentLanguage] : (currentLanguage === 'ko' ? '알 수 없는 모드' : 'Unknown Mode')}
                   </span>
                 </div>
               </div>
