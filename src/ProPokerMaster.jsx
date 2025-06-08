@@ -1733,10 +1733,10 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
       {mode && LEARNING_MODES[mode] && (
         <div className="mb-4 p-3 bg-blue-900/50 rounded-lg border border-blue-500/30">
           <div className="text-blue-300 text-sm font-semibold mb-1">
-            📚 {LEARNING_MODES[mode].name} 모드
+            📚 {LEARNING_MODES[mode].name[currentLanguage]} {currentLanguage === 'ko' ? '모드' : 'Mode'}
           </div>
           <div className="text-blue-200 text-xs">
-            {LEARNING_MODES[mode].tips[Math.floor(Math.random() * LEARNING_MODES[mode].tips.length)]}
+            {LEARNING_MODES[mode].tips[currentLanguage][Math.floor(Math.random() * LEARNING_MODES[mode].tips[currentLanguage].length)]}
           </div>
         </div>
       )}
@@ -2249,12 +2249,12 @@ const HoldemMaster = () => {
     
     const mode = LEARNING_MODES[selectedMode];
     if (mode && mode.tips) {
-      const randomTip = mode.tips[Math.floor(Math.random() * mode.tips.length)];
+      const randomTip = mode.tips[currentLanguage][Math.floor(Math.random() * mode.tips[currentLanguage].length)];
       if (Math.random() < 0.3) {
         feedback.push({
           type: 'mode_tip',
           level: feedbackLevel,
-          message: `💡 ${mode.name[currentLanguage]} 팁: ${mode.tips[currentLanguage][Math.floor(Math.random() * mode.tips[currentLanguage].length)]}`,
+          message: `💡 ${mode.name[currentLanguage]} ${currentLanguage === 'ko' ? '팁' : 'Tip'}: ${randomTip}`,
           icon: '🎯'
         });
       }
