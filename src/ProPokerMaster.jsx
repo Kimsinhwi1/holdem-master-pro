@@ -51,88 +51,178 @@ const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
 const SUIT_COLORS = { '♠': '#000', '♣': '#000', '♥': '#e53e3e', '♦': '#e53e3e' };
 const BLINDS = { small: 10, big: 20 };
 
-// 🎯 학습 모드 정의 (퍼즐 모드 추가)
+// 🎯 학습 모드 정의 (퍼즐 모드 추가) / Learning Modes Definition
 const LEARNING_MODES = {
   probability: { 
-    name: '확률 훈련', 
+    name: {
+      ko: '확률 훈련',
+      en: 'Probability Training'
+    },
     icon: Calculator, 
     color: 'bg-blue-500',
-    description: '팟 오즈, 아웃츠, 승률 계산을 마스터하세요',
-    tips: ['아웃츠를 정확히 세는 연습을 하세요', '팟 오즈와 승률을 비교하는 습관을 기르세요'],
+    description: {
+      ko: '팟 오즈, 아웃츠, 승률 계산을 마스터하세요',
+      en: 'Master pot odds, outs, and win rate calculations'
+    },
+    tips: {
+      ko: ['아웃츠를 정확히 세는 연습을 하세요', '팟 오즈와 승률을 비교하는 습관을 기르세요'],
+      en: ['Practice counting outs accurately', 'Develop the habit of comparing pot odds and win rates']
+    },
     theory: 'intermediate'
   },
   bluffing: { 
-    name: '블러프 훈련', 
+    name: {
+      ko: '블러프 훈련',
+      en: 'Bluff Training'
+    },
     icon: Eye, 
     color: 'bg-purple-500',
-    description: '언제, 어떻게 블러프할지 배우세요',
-    tips: ['상대방의 레인지를 고려하세요', '보드 텍스처에 따라 블러프 빈도를 조절하세요'],
+    description: {
+      ko: '언제, 어떻게 블러프할지 배우세요',
+      en: 'Learn when and how to bluff effectively'
+    },
+    tips: {
+      ko: ['상대방의 레인지를 고려하세요', '보드 텍스처에 따라 블러프 빈도를 조절하세요'],
+      en: ['Consider your opponent\'s range', 'Adjust bluff frequency based on board texture']
+    },
     theory: 'advanced'
   },
   position: { 
-    name: '포지션 훈련', 
+    name: {
+      ko: '포지션 훈련',
+      en: 'Position Training'
+    },
     icon: Target, 
     color: 'bg-green-500',
-    description: '포지션의 힘을 활용하는 법을 배우세요',
-    tips: ['늦은 포지션에서 더 많은 핸드를 플레이하세요', '일찍 포지션에서는 강한 핸드만 플레이하세요'],
+    description: {
+      ko: '포지션의 힘을 활용하는 법을 배우세요',
+      en: 'Learn how to leverage the power of position'
+    },
+    tips: {
+      ko: ['늦은 포지션에서 더 많은 핸드를 플레이하세요', '일찍 포지션에서는 강한 핸드만 플레이하세요'],
+      en: ['Play more hands in late position', 'Play only strong hands in early position']
+    },
     theory: 'beginner'
   },
   reading: { 
-    name: '상대 읽기', 
+    name: {
+      ko: '상대 읽기',
+      en: 'Opponent Reading'
+    },
     icon: Brain, 
     color: 'bg-orange-500',
-    description: '상대방의 패턴과 텔을 파악하세요',
-    tips: ['베팅 패턴을 주의깊게 관찰하세요', '상대방의 행동 변화를 감지하세요'],
+    description: {
+      ko: '상대방의 패턴과 텔을 파악하세요',
+      en: 'Identify opponent patterns and tells'
+    },
+    tips: {
+      ko: ['베팅 패턴을 주의깊게 관찰하세요', '상대방의 행동 변화를 감지하세요'],
+      en: ['Carefully observe betting patterns', 'Detect changes in opponent behavior']
+    },
     theory: 'intermediate'
   },
   // 🚀 새로운 퍼즐 모드 추가
   puzzle: {
-    name: '홀덤 퍼즐',
+    name: {
+      ko: '홀덤 퍼즐',
+      en: 'Holdem Puzzle'
+    },
     icon: Puzzle,
     color: 'bg-purple-600',
-    description: '올인 vs 폴드 - 판단력을 테스트하고 칩을 획득하세요',
-    tips: ['핸드 강도를 정확히 판단하세요', '상대방의 가능한 핸드를 고려하세요'],
+    description: {
+      ko: '올인 vs 폴드 - 판단력을 테스트하고 칩을 획득하세요',
+      en: 'All-in vs Fold - Test your judgment and earn chips'
+    },
+    tips: {
+      ko: ['핸드 강도를 정확히 판단하세요', '상대방의 가능한 핸드를 고려하세요'],
+      en: ['Judge hand strength accurately', 'Consider opponent\'s possible hands']
+    },
     theory: 'beginner',
     isSpecial: true
   },
   tournament: {
-    name: '토너먼트 전략',
+    name: {
+      ko: '토너먼트 전략',
+      en: 'Tournament Strategy'
+    },
     icon: Trophy,
     color: 'bg-yellow-500',
-    description: 'ICM과 스택 사이즈를 고려한 토너먼트 플레이',
-    tips: ['블라인드 스틸을 적극 활용하세요', '버블 상황에서는 타이트하게 플레이하세요'],
+    description: {
+      ko: 'ICM과 스택 사이즈를 고려한 토너먼트 플레이',
+      en: 'Tournament play considering ICM and stack sizes'
+    },
+    tips: {
+      ko: ['블라인드 스틸을 적극 활용하세요', '버블 상황에서는 타이트하게 플레이하세요'],
+      en: ['Actively utilize blind steals', 'Play tight during bubble situations']
+    },
     theory: 'expert'
   },
   headsup: {
-    name: '헤즈업',
+    name: {
+      ko: '헤즈업',
+      en: 'Heads-up'
+    },
     icon: Users2,
     color: 'bg-red-500',
-    description: '1대1 상황에서의 공격적 플레이',
-    tips: ['더 넓은 레인지로 플레이하세요', '포지션을 최대한 활용하세요'],
+    description: {
+      ko: '1대1 상황에서의 공격적 플레이',
+      en: 'Aggressive play in one-on-one situations'
+    },
+    tips: {
+      ko: ['더 넓은 레인지로 플레이하세요', '포지션을 최대한 활용하세요'],
+      en: ['Play with a wider range', 'Maximize position advantage']
+    },
     theory: 'expert'
   },
   multiway: {
-    name: '멀티웨이 팟',
+    name: {
+      ko: '멀티웨이 팟',
+      en: 'Multiway Pot'
+    },
     icon: Users,
     color: 'bg-teal-500',
-    description: '3명 이상이 참여하는 복잡한 상황 대처',
-    tips: ['너트에 가까운 핸드만 플레이하세요', '블러프 빈도를 줄이세요'],
+    description: {
+      ko: '3명 이상이 참여하는 복잡한 상황 대처',
+      en: 'Handle complex situations with 3+ players'
+    },
+    tips: {
+      ko: ['너트에 가까운 핸드만 플레이하세요', '블러프 빈도를 줄이세요'],
+      en: ['Play only near-nuts hands', 'Reduce bluff frequency']
+    },
     theory: 'advanced'
   },
   advanced: {
-    name: 'GTO 훈련',
+    name: {
+      ko: 'GTO 훈련',
+      en: 'GTO Training'
+    },
     icon: Database,
     color: 'bg-indigo-500',
-    description: '게임 이론적 최적 전략을 학습하세요',
-    tips: ['밸런싱의 중요성을 이해하세요', '상대방의 실수를 익스플로잇하세요'],
+    description: {
+      ko: '게임 이론적 최적 전략을 학습하세요',
+      en: 'Learn Game Theory Optimal strategies'
+    },
+    tips: {
+      ko: ['밸런싱의 중요성을 이해하세요', '상대방의 실수를 익스플로잇하세요'],
+      en: ['Understand the importance of balancing', 'Exploit opponent mistakes']
+    },
     theory: 'master'
   },
   ai_battle: {
-    name: 'AI 대전',
+    name: {
+      ko: 'AI 대전',
+      en: 'AI Battle'
+    },
     icon: Gamepad2,
     color: 'bg-red-600',
-    description: '다양한 AI 스타일과 실전 대결',
-    tips: ['각 AI의 플레이 패턴을 파악하세요', '상황에 맞는 전략을 사용하세요'],
+    description: {
+      ko: '다양한 AI 스타일과 실전 대결',
+      en: 'Real battles against various AI styles'
+    },
+    tips: {
+      ko: ['각 AI의 플레이 패턴을 파악하세요', '상황에 맞는 전략을 사용하세요'],
+      en: ['Identify each AI\'s play patterns', 'Use situation-appropriate strategies']
+    },
     theory: 'practice',
     isCompetitive: true
   }
@@ -454,7 +544,28 @@ const LANGUAGES = {
       puzzleMode: '퍼즐 모드: 빠른 의사결정과 확률 직감 향상',
       basicMode: '기본 모드: 홀덤 룰과 핸드 랭킹 학습',
       advancedMode: '고급 모드: 전략적 사고와 GTO 이론 적용',
-      virtualChipEarn: '가상 칩 획득 (학습용)'
+      virtualChipEarn: '가상 칩 획득 (학습용)',
+      
+      // 추가 UI 요소들
+      yourTurn: '당신의 턴',
+      holdingChips: '보유 칩',
+      reset: '초기화',
+      selectChipsToBet: '배팅할 칩을 선택하세요',
+      cancelSelection: '선택 취소',
+      chargeChipsByAd: '광고 시청으로 칩 충전',
+      adViewingComplete: '광고 시청 완료',
+      close: '닫기',
+      insufficientChips: '칩이 부족합니다!',
+      chargeFromVault: '무료 금고에서 칩을 충전하거나 퍼즐 게임을 플레이하세요.',
+      proChallenge: '프로 포커 플레이어 도전!',
+      congratulations: '축하합니다! 당신의 포커 실력이 프로 수준에 도달했습니다.',
+      currentPerformance: '현재 성과',
+      totalProfit: '총 수익',
+      winStreak: '연승',
+      continueLeaning: '계속 학습하기',
+      challengePro: '프로 도전하기!',
+      holdemPuzzleTitle: '홀덤 퍼즐 🔥',
+      puzzleDescription: '올인 vs 폴드 - 판단력을 테스트하고 학습용 가상 칩을 획득하세요!'
     }
   },
   en: {
@@ -547,55 +658,148 @@ const LANGUAGES = {
       puzzleMode: 'Puzzle Mode: Quick decision-making and probability intuition',
       basicMode: 'Basic Mode: Texas Hold\'em rules and hand rankings',
       advancedMode: 'Advanced Mode: Strategic thinking and GTO theory application',
-      virtualChipEarn: 'Virtual Chips Earned (Educational)'
+      virtualChipEarn: 'Virtual Chips Earned (Educational)',
+      
+      // 추가 UI 요소들
+      yourTurn: 'Your Turn',
+      holdingChips: 'Holdings',
+      reset: 'Reset',
+      selectChipsToBet: 'Select chips to bet',
+      cancelSelection: 'Cancel Selection',
+      chargeChipsByAd: 'Charge chips by watching ads',
+      adViewingComplete: 'Ad viewing complete',
+      close: 'Close',
+      insufficientChips: 'Insufficient chips!',
+      chargeFromVault: 'Charge from free vault or play puzzle game.',
+      proChallenge: 'Pro Poker Player Challenge!',
+      congratulations: 'Congratulations! Your poker skills have reached pro level.',
+      currentPerformance: 'Current Performance',
+      totalProfit: 'Total Profit',
+      winStreak: 'Win Streak',
+      continueLeaning: 'Continue Learning',
+      challengePro: 'Challenge Pro!',
+      holdemPuzzleTitle: 'Holdem Puzzle 🔥',
+      puzzleDescription: 'All-in vs Fold - Test your judgment and earn educational virtual chips!'
     }
   }
 };
 
-// 피드백 수준 정의
+// 피드백 수준 정의 / Feedback Levels Definition
 const FEEDBACK_LEVELS = {
   beginner: {
-    name: '초보자',
-    description: '기본적인 핸드 정보와 간단한 조언',
+    name: {
+      ko: '초보자',
+      en: 'Beginner'
+    },
+    description: {
+      ko: '기본적인 핸드 정보와 간단한 조언',
+      en: 'Basic hand information and simple advice'
+    },
     icon: '🌱',
     tips: {
-      fold: '폴드는 나쁜 핸드를 포기하는 것입니다. 손실을 줄이는 현명한 선택이에요!',
-      call: '콜은 상대의 베팅에 맞춰 참여하는 것입니다. 괜찮은 핸드가 있을 때 사용하세요.',
-      raise: '레이즈는 공격적인 플레이입니다. 강한 핸드가 있거나 블러프할 때 사용해보세요!',
-      check: '체크는 베팅 없이 넘어가는 것입니다. 핸드가 애매할 때 안전한 선택이에요.'
+      fold: {
+        ko: '폴드는 나쁜 핸드를 포기하는 것입니다. 손실을 줄이는 현명한 선택이에요!',
+        en: 'Folding means giving up a bad hand. It\'s a wise choice to minimize losses!'
+      },
+      call: {
+        ko: '콜은 상대의 베팅에 맞춰 참여하는 것입니다. 괜찮은 핸드가 있을 때 사용하세요.',
+        en: 'Calling means matching the opponent\'s bet. Use it when you have a decent hand.'
+      },
+      raise: {
+        ko: '레이즈는 공격적인 플레이입니다. 강한 핸드가 있거나 블러프할 때 사용해보세요!',
+        en: 'Raising is aggressive play. Use it when you have a strong hand or want to bluff!'
+      },
+      check: {
+        ko: '체크는 베팅 없이 넘어가는 것입니다. 핸드가 애매할 때 안전한 선택이에요.',
+        en: 'Checking means passing without betting. It\'s a safe choice when your hand is uncertain.'
+      }
     }
   },
   intermediate: {
-    name: '중수',
-    description: '포지션과 팟 오즈를 고려한 조언',
+    name: {
+      ko: '중수',
+      en: 'Intermediate'
+    },
+    description: {
+      ko: '포지션과 팟 오즈를 고려한 조언',
+      en: 'Advice considering position and pot odds'
+    },
     icon: '🎯',
     tips: {
-      fold: '현재 팟 오즈와 핸드 강도를 비교해보세요. 수학적으로 맞지 않다면 폴드가 정답입니다.',
-      call: '상대의 베팅 패턴과 보드 텍스처를 분석해보세요. 드로우가 있다면 임플라이드 오즈도 고려하세요.',
-      raise: '밸류 베팅인지 블러프인지 명확히 하세요. 상대의 레인지를 좁히는 효과도 있습니다.',
-      check: '포지션이 중요합니다. 인포메이션을 얻거나 팟 컨트롤을 위한 체크를 고려해보세요.'
+      fold: {
+        ko: '현재 팟 오즈와 핸드 강도를 비교해보세요. 수학적으로 맞지 않다면 폴드가 정답입니다.',
+        en: 'Compare current pot odds with hand strength. If mathematically incorrect, folding is the right answer.'
+      },
+      call: {
+        ko: '상대의 베팅 패턴과 보드 텍스처를 분석해보세요. 드로우가 있다면 임플라이드 오즈도 고려하세요.',
+        en: 'Analyze opponent\'s betting patterns and board texture. Consider implied odds if you have draws.'
+      },
+      raise: {
+        ko: '밸류 베팅인지 블러프인지 명확히 하세요. 상대의 레인지를 좁히는 효과도 있습니다.',
+        en: 'Clarify whether it\'s a value bet or bluff. It also narrows opponent\'s range.'
+      },
+      check: {
+        ko: '포지션이 중요합니다. 인포메이션을 얻거나 팟 컨트롤을 위한 체크를 고려해보세요.',
+        en: 'Position is important. Consider checking for information or pot control.'
+      }
     }
   },
   advanced: {
-    name: '고수',
-    description: '레인지와 GTO 전략 기반 분석',
+    name: {
+      ko: '고수',
+      en: 'Advanced'
+    },
+    description: {
+      ko: '레인지와 GTO 전략 기반 분석',
+      en: 'Range and GTO strategy-based analysis'
+    },
     icon: '🎓',
     tips: {
-      fold: '상대의 3벳 레인지를 고려했을 때 여러분의 핸드가 어느 정도 에퀴티를 가지는지 분석해보세요.',
-      call: '디펜딩 레인지와 블러프 캐쳐를 고려하세요. 상대의 밸류:블러프 비율을 추정해보세요.',
-      raise: '밸런스드 레인지를 유지하면서 상대를 익스플로잇할 수 있는 스팟인지 판단하세요.',
-      check: '체크-콜, 체크-레이즈, 체크-폴드 중 어떤 라인이 최적인지 보드 텍스처와 함께 고려하세요.'
+      fold: {
+        ko: '상대의 3벳 레인지를 고려했을 때 여러분의 핸드가 어느 정도 에퀴티를 가지는지 분석해보세요.',
+        en: 'Analyze how much equity your hand has against opponent\'s 3-bet range.'
+      },
+      call: {
+        ko: '디펜딩 레인지와 블러프 캐쳐를 고려하세요. 상대의 밸류:블러프 비율을 추정해보세요.',
+        en: 'Consider defending range and bluff catchers. Estimate opponent\'s value:bluff ratio.'
+      },
+      raise: {
+        ko: '밸런스드 레인지를 유지하면서 상대를 익스플로잇할 수 있는 스팟인지 판단하세요.',
+        en: 'Determine if this is a spot to exploit opponents while maintaining a balanced range.'
+      },
+      check: {
+        ko: '체크-콜, 체크-레이즈, 체크-폴드 중 어떤 라인이 최적인지 보드 텍스처와 함께 고려하세요.',
+        en: 'Consider which line is optimal: check-call, check-raise, or check-fold, along with board texture.'
+      }
     }
   },
   master: {
-    name: '마스터',
-    description: '고급 수학적 분석과 심리 게임',
+    name: {
+      ko: '마스터',
+      en: 'Master'
+    },
+    description: {
+      ko: '고급 수학적 분석과 심리 게임',
+      en: 'Advanced mathematical analysis and psychological gameplay'
+    },
     icon: '👑',
     tips: {
-      fold: 'MDF(Minimum Defense Frequency)를 계산하고 상대의 익스플로잇 가능성을 분석했나요?',
-      call: '상대의 스택 깊이와 SPR을 고려한 플레이인지, 그리고 리버에서의 플레이어빌리티는 어떤지 판단하세요.',
-      raise: '상대의 텔과 베팅 사이징을 통해 핸드 레인지를 좁혔나요? 메타게임 요소도 고려하세요.',
-      check: '레벨링과 상대방의 사고 과정을 역추적해보세요. 게임플로우와 이미지도 중요합니다.'
+      fold: {
+        ko: 'MDF(Minimum Defense Frequency)를 계산하고 상대의 익스플로잇 가능성을 분석했나요?',
+        en: 'Have you calculated MDF (Minimum Defense Frequency) and analyzed opponent\'s exploit potential?'
+      },
+      call: {
+        ko: '상대의 스택 깊이와 SPR을 고려한 플레이인지, 그리고 리버에서의 플레이어빌리티는 어떤지 판단하세요.',
+        en: 'Consider opponent\'s stack depth and SPR, and assess river playability.'
+      },
+      raise: {
+        ko: '상대의 텔과 베팅 사이징을 통해 핸드 레인지를 좁혔나요? 메타게임 요소도 고려하세요.',
+        en: 'Have you narrowed hand range through opponent tells and bet sizing? Consider metagame elements.'
+      },
+      check: {
+        ko: '레벨링과 상대방의 사고 과정을 역추적해보세요. 게임플로우와 이미지도 중요합니다.',
+        en: 'Consider leveling and reverse-engineer opponent\'s thought process. Game flow and image matter.'
+      }
     }
   }
 };
@@ -1138,7 +1342,7 @@ const EnhancedBettingControls = ({ player, gameState, onAction, mode, LANGUAGES,
       
       {/* 팟 정보 */}
       <div className="text-center mb-4">
-        <div className="text-white text-xl font-bold mb-2">당신의 턴</div>
+        <div className="text-white text-xl font-bold mb-2">{LANGUAGES[currentLanguage].ui.yourTurn}</div>
         <div className="text-yellow-400 text-sm">
           팟: ${gameState.pot.toLocaleString()} | 
           {callAmount > 0 ? ` 콜: $${callAmount.toLocaleString()}` : ' 체크 가능'} | 
@@ -1150,7 +1354,7 @@ const EnhancedBettingControls = ({ player, gameState, onAction, mode, LANGUAGES,
       <div className="mb-4">
         <ChipStack 
           chips={player.chips} 
-          label="보유 칩"
+          label={LANGUAGES[currentLanguage].ui.holdingChips}
           maxVisible={4}
         />
       </div>
@@ -1176,7 +1380,7 @@ const EnhancedBettingControls = ({ player, gameState, onAction, mode, LANGUAGES,
               onClick={clearBet}
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm transition-colors"
             >
-              초기화
+              {LANGUAGES[currentLanguage].ui.reset}
             </button>
           </div>
         </div>
@@ -1185,7 +1389,7 @@ const EnhancedBettingControls = ({ player, gameState, onAction, mode, LANGUAGES,
       {/* 칩 선택기 */}
       {showChipSelector && (
         <div className="mb-4 p-4 bg-white/10 rounded-lg border border-white/20">
-          <div className="text-white text-sm font-semibold mb-3 text-center">배팅할 칩을 선택하세요</div>
+          <div className="text-white text-sm font-semibold mb-3 text-center">{LANGUAGES[currentLanguage].ui.selectChipsToBet}</div>
           <div className="grid grid-cols-5 gap-2">
             {availableChips.map(chipValue => (
               <PokerChip
@@ -1518,7 +1722,7 @@ const BettingControls = ({ player, gameState, onAction, mode, LANGUAGES, current
   return (
     <div className="bg-black/90 backdrop-blur-md rounded-xl p-6 border-2 border-yellow-500/50 shadow-2xl">
       <div className="text-center mb-4">
-        <div className="text-white text-xl font-bold mb-2">당신의 턴</div>
+        <div className="text-white text-xl font-bold mb-2">{LANGUAGES[currentLanguage].ui.yourTurn}</div>
         <div className="text-yellow-400 text-sm">
           팟: ${gameState.pot} | 
           {callAmount > 0 ? ` 콜: ${callAmount}` : ' 체크 가능'} | 
@@ -2022,7 +2226,7 @@ const HoldemMaster = () => {
       feedback.push({
         type: 'action',
         level: feedbackLevel,
-        message: currentLevel.tips[action],
+        message: currentLevel.tips[action][currentLanguage],
         icon: currentLevel.icon
       });
     }
@@ -2050,7 +2254,7 @@ const HoldemMaster = () => {
         feedback.push({
           type: 'mode_tip',
           level: feedbackLevel,
-          message: `💡 ${mode.name} 팁: ${randomTip}`,
+          message: `💡 ${mode.name[currentLanguage]} 팁: ${mode.tips[currentLanguage][Math.floor(Math.random() * mode.tips[currentLanguage].length)]}`,
           icon: '🎯'
         });
       }
@@ -2170,9 +2374,9 @@ const HoldemMaster = () => {
       });
       
       addToLog('🎯 새로운 학습 세션이 시작되었습니다!');
-      addToLog(`📚 모드: ${LEARNING_MODES[mode]?.name}`);
+      addToLog(`📚 모드: ${LEARNING_MODES[mode]?.name[currentLanguage]}`);
       addToLog(`💰 스몰/빅 블라인드: ${BLINDS.small}/${BLINDS.big}`);
-      addToLog(`🔰 피드백 수준: ${FEEDBACK_LEVELS[feedbackLevel]?.name}`);
+      addToLog(`🔰 피드백 수준: ${FEEDBACK_LEVELS[feedbackLevel]?.name[currentLanguage]}`);
       
       setTimeout(() => {
         addToLog(`👥 플레이어: ${players.map(p => p.name).join(', ')}`);
@@ -3030,13 +3234,13 @@ const HoldemMaster = () => {
                 }`}
               >
                 <span className="text-lg">{level.icon}</span>
-                <span>{level.name}</span>
+                <span>{level.name[currentLanguage]}</span>
               </button>
             ))}
           </div>
           <div className="text-center">
             <p className="text-emerald-300 text-sm">
-              {FEEDBACK_LEVELS[feedbackLevel].description}
+              {FEEDBACK_LEVELS[feedbackLevel].description[currentLanguage]}
             </p>
           </div>
         </div>
@@ -3208,13 +3412,13 @@ const HoldemMaster = () => {
                   <div className={`w-16 h-16 ${mode.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg mx-auto`}>
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-center">{mode.name}</h3>
+                  <h3 className="text-xl font-bold mb-3 text-center">{mode.name[currentLanguage]}</h3>
                   <p className="text-emerald-200 mb-4 text-center text-sm leading-relaxed">
-                    {mode.description}
+                    {mode.description[currentLanguage]}
                   </p>
                   {!isDisabled && (
                     <div className="flex items-center justify-center text-emerald-300 group-hover:text-white transition-colors">
-                      <span className="font-semibold">학습 시작</span>
+                      <span className="font-semibold">{currentLanguage === 'ko' ? '학습 시작' : 'Start Learning'}</span>
                       <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                     </div>
                   )}
@@ -3389,7 +3593,7 @@ const HoldemMaster = () => {
               
               <div className="text-right">
                 <div className="text-lg">현재 베팅: ${gameState.currentBet.toLocaleString()}</div>
-                {isPlayerTurn && <div className="text-yellow-400 font-bold animate-pulse">당신의 턴!</div>}
+                {isPlayerTurn && <div className="text-yellow-400 font-bold animate-pulse">{LANGUAGES[currentLanguage].ui.yourTurn}!</div>}
               </div>
             </div>
           </div>
