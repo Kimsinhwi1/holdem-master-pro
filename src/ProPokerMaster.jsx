@@ -415,7 +415,46 @@ const LANGUAGES = {
       pokerBasics: '포커 기초',
       advanced: '고급 전략',
       tournaments: '토너먼트',
-      psychology: '심리학'
+      psychology: '심리학',
+      
+      // 교육 면책조항
+      educationalTitle: '📚 교육 목적 전용 플랫폼',
+      appPurpose: '✅ 이 앱은 교육용입니다',
+      purposeList: [
+        '• 포커 이론과 전략 학습',
+        '• 확률 계산 연습',
+        '• 의사결정 능력 향상',
+        '• 수학적 사고력 개발',
+        '• 게임 이론 학습'
+      ],
+      notGambling: '❌ 실제 도박이 아닙니다',
+      notGamblingList: [
+        '• 실제 돈을 사용하지 않음',
+        '• 가상 칩만 사용',
+        '• 현금 지급 없음',
+        '• 도박 유도 없음',
+        '• 순수 학습 목적'
+      ],
+      learningGoals: '🎓 학습 목표 및 혜택',
+      goalDescription: '홀덤마스터 프로는 포커의 수학적 원리와 전략적 사고를 학습할 수 있는 교육 플랫폼입니다. AI 기반 피드백 시스템을 통해 확률 계산, 위험 관리, 의사결정 과정을 체계적으로 학습하여 논리적 사고력과 수학적 분석 능력을 향상시킬 수 있습니다. 모든 칩은 가상이며, 실제 가치가 없는 학습 도구로만 사용됩니다.',
+      ageRestriction: '만 18세 이상만 이용 가능 • 책임감 있는 학습 권장 • 실제 도박과 무관',
+      
+      // 가상 칩 시스템
+      virtualChipTitle: '🪙 가상 칩 시스템 - 학습 도구 설명',
+      virtualChipDesc: '아래 칩은 모두 가상 화폐로, 실제 가치가 없는 학습 도구입니다. 포커의 베팅 구조와 자금 관리를 연습하기 위한 교육용 시뮬레이션입니다.',
+      virtualChipsLabel: '가상 칩 (학습용)',
+      learningVault: '학습 금고',
+      virtualChipRecharge: '가상 칩 충전 (무료)',
+      
+      // 게임 통계
+      handsWon: '승리한 핸드',
+      learningScore: '학습 점수',
+      gameMode: '🎮 교육용 게임 모드',
+      modeGoals: '🧠 각 모드별 학습 목표',
+      puzzleMode: '퍼즐 모드: 빠른 의사결정과 확률 직감 향상',
+      basicMode: '기본 모드: 홀덤 룰과 핸드 랭킹 학습',
+      advancedMode: '고급 모드: 전략적 사고와 GTO 이론 적용',
+      virtualChipEarn: '가상 칩 획득 (학습용)'
     }
   },
   en: {
@@ -469,7 +508,46 @@ const LANGUAGES = {
       pokerBasics: 'Poker Basics',
       advanced: 'Advanced Strategy', 
       tournaments: 'Tournaments',
-      psychology: 'Psychology'
+      psychology: 'Psychology',
+      
+      // 교육 면책조항
+      educationalTitle: '📚 Educational Platform Only',
+      appPurpose: '✅ This App is Educational',
+      purposeList: [
+        '• Learn poker theory and strategy',
+        '• Practice probability calculations',
+        '• Improve decision-making skills',
+        '• Develop mathematical thinking',
+        '• Study game theory'
+      ],
+      notGambling: '❌ This is NOT Real Gambling',
+      notGamblingList: [
+        '• No real money used',
+        '• Virtual chips only',
+        '• No cash payouts',
+        '• No gambling promotion',
+        '• Pure educational purpose'
+      ],
+      learningGoals: '🎓 Learning Goals & Benefits',
+      goalDescription: 'Holdem Master Pro is an educational platform where you can learn the mathematical principles and strategic thinking of poker. Through our AI-based feedback system, you can systematically learn probability calculation, risk management, and decision-making processes to improve logical thinking and mathematical analysis skills. All chips are virtual and have no real value - they are educational tools only.',
+      ageRestriction: '18+ only • Responsible learning recommended • Not related to real gambling',
+      
+      // 가상 칩 시스템
+      virtualChipTitle: '🪙 Virtual Chip System - Educational Tool Description',
+      virtualChipDesc: 'All chips below are virtual currency with no real value, serving as educational tools. They are used for educational simulation to practice poker betting structure and bankroll management.',
+      virtualChipsLabel: 'Virtual Chips (Educational)',
+      learningVault: 'Learning Vault',
+      virtualChipRecharge: 'Virtual Chip Recharge (Free)',
+      
+      // 게임 통계
+      handsWon: 'Hands Won',
+      learningScore: 'Learning Score',
+      gameMode: '🎮 Educational Game Modes',
+      modeGoals: '🧠 Learning Goals by Mode',
+      puzzleMode: 'Puzzle Mode: Quick decision-making and probability intuition',
+      basicMode: 'Basic Mode: Texas Hold\'em rules and hand rankings',
+      advancedMode: 'Advanced Mode: Strategic thinking and GTO theory application',
+      virtualChipEarn: 'Virtual Chips Earned (Educational)'
     }
   }
 };
@@ -2880,35 +2958,31 @@ const HoldemMaster = () => {
           <div className="mt-8 bg-blue-900/20 backdrop-blur-sm rounded-xl p-6 border border-blue-300/30">
             <div className="flex items-center justify-center mb-4">
               <GraduationCap className="w-8 h-8 text-blue-300 mr-3" />
-              <h2 className="text-xl font-bold text-blue-200">📚 교육 목적 전용 플랫폼</h2>
+              <h2 className="text-xl font-bold text-blue-200">{LANGUAGES[currentLanguage].ui.educationalTitle}</h2>
             </div>
             
             <div className="grid md:grid-cols-2 gap-4 text-left">
               <div className="bg-green-900/20 rounded-lg p-4 border border-green-400/30">
                 <h3 className="text-green-300 font-semibold mb-2 flex items-center">
                   <CheckCircle className="w-5 h-5 mr-2" />
-                  ✅ 이 앱은 교육용입니다
+                  {LANGUAGES[currentLanguage].ui.appPurpose}
                 </h3>
                 <ul className="text-green-200 text-sm space-y-1">
-                  <li>• 포커 이론과 전략 학습</li>
-                  <li>• 확률 계산 연습</li>
-                  <li>• 의사결정 능력 향상</li>
-                  <li>• 수학적 사고력 개발</li>
-                  <li>• 게임 이론 학습</li>
+                  {LANGUAGES[currentLanguage].ui.purposeList.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
               </div>
               
               <div className="bg-red-900/20 rounded-lg p-4 border border-red-400/30">
                 <h3 className="text-red-300 font-semibold mb-2 flex items-center">
                   <XCircle className="w-5 h-5 mr-2" />
-                  ❌ 실제 도박이 아닙니다
+                  {LANGUAGES[currentLanguage].ui.notGambling}
                 </h3>
                 <ul className="text-red-200 text-sm space-y-1">
-                  <li>• 실제 돈을 사용하지 않음</li>
-                  <li>• 가상 칩만 사용</li>
-                  <li>• 현금 지급 없음</li>
-                  <li>• 도박 유도 없음</li>
-                  <li>• 순수 학습 목적</li>
+                  {LANGUAGES[currentLanguage].ui.notGamblingList.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -2916,20 +2990,17 @@ const HoldemMaster = () => {
             <div className="mt-4 bg-yellow-900/20 rounded-lg p-4 border border-yellow-400/30">
               <h3 className="text-yellow-300 font-semibold mb-2 flex items-center">
                 <Book className="w-5 h-5 mr-2" />
-                🎓 학습 목표 및 혜택
+                {LANGUAGES[currentLanguage].ui.learningGoals}
               </h3>
               <p className="text-yellow-200 text-sm leading-relaxed">
-                홀덤마스터 프로는 포커의 수학적 원리와 전략적 사고를 학습할 수 있는 교육 플랫폼입니다. 
-                AI 기반 피드백 시스템을 통해 확률 계산, 위험 관리, 의사결정 과정을 체계적으로 학습하여 
-                논리적 사고력과 수학적 분석 능력을 향상시킬 수 있습니다. 모든 칩은 가상이며, 
-                실제 가치가 없는 학습 도구로만 사용됩니다.
+                {LANGUAGES[currentLanguage].ui.goalDescription}
               </p>
             </div>
             
             <div className="mt-4 text-center">
               <p className="text-blue-200 text-xs">
                 <AlertTriangle className="w-4 h-4 inline mr-1" />
-                만 18세 이상만 이용 가능 • 책임감 있는 학습 권장 • 실제 도박과 무관
+                {LANGUAGES[currentLanguage].ui.ageRestriction}
               </p>
             </div>
           </div>
@@ -3011,11 +3082,10 @@ const HoldemMaster = () => {
           <div className="bg-amber-900/20 rounded-lg p-4 border border-amber-400/30 mb-4">
             <h3 className="text-amber-300 font-semibold mb-2 flex items-center">
               <Coins className="w-5 h-5 mr-2" />
-              🪙 가상 칩 시스템 - 학습 도구 설명
+              {LANGUAGES[currentLanguage].ui.virtualChipTitle}
             </h3>
             <p className="text-amber-200 text-sm">
-              아래 칩은 모두 <strong>가상 화폐</strong>로, 실제 가치가 없는 학습 도구입니다. 
-              포커의 베팅 구조와 자금 관리를 연습하기 위한 교육용 시뮬레이션입니다.
+              {LANGUAGES[currentLanguage].ui.virtualChipDesc}
             </p>
           </div>
         </div>
@@ -3026,7 +3096,7 @@ const HoldemMaster = () => {
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center">
             <Coins className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
             <div className="text-2xl font-bold">{playerStats.totalChips.toLocaleString()}</div>
-            <div className="text-sm text-emerald-200">가상 칩 (학습용)</div>
+            <div className="text-sm text-emerald-200">{LANGUAGES[currentLanguage].ui.virtualChipsLabel}</div>
           </div>
           
           {/* 금고 */}
@@ -3035,20 +3105,20 @@ const HoldemMaster = () => {
             className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105"
           >
             <Lock className="w-8 h-8 mx-auto mb-2 text-green-400" />
-            <div className="text-2xl font-bold">학습 금고</div>
-            <div className="text-sm text-emerald-200">가상 칩 충전 (무료)</div>
+            <div className="text-2xl font-bold">{LANGUAGES[currentLanguage].ui.learningVault}</div>
+            <div className="text-sm text-emerald-200">{LANGUAGES[currentLanguage].ui.virtualChipRecharge}</div>
           </div>
           
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center">
             <Trophy className="w-8 h-8 mx-auto mb-2 text-yellow-400" />
             <div className="text-2xl font-bold">{playerStats.handsWon}</div>
-            <div className="text-sm text-emerald-200">승리한 핸드</div>
+            <div className="text-sm text-emerald-200">{LANGUAGES[currentLanguage].ui.handsWon}</div>
           </div>
           
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-white text-center">
             <Star className="w-8 h-8 mx-auto mb-2 text-purple-400" />
             <div className="text-2xl font-bold">{playerStats.learningScore}</div>
-            <div className="text-sm text-emerald-200">학습 점수</div>
+            <div className="text-sm text-emerald-200">{LANGUAGES[currentLanguage].ui.learningScore}</div>
           </div>
           
         </div>
@@ -3080,23 +3150,23 @@ const HoldemMaster = () => {
 
         {/* 🚀 학습 모드 선택 (퍼즐 게임 추가) */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-white text-center mb-4">🎮 교육용 게임 모드</h2>
+          <h2 className="text-3xl font-bold text-white text-center mb-4">{LANGUAGES[currentLanguage].ui.gameMode}</h2>
           
           {/* Educational Context for Game Modes */}
           <div className="bg-indigo-900/20 rounded-lg p-4 border border-indigo-400/30 mb-6">
             <h3 className="text-indigo-300 font-semibold mb-2 flex items-center">
               <Brain className="w-5 h-5 mr-2" />
-              🧠 각 모드별 학습 목표
+              {LANGUAGES[currentLanguage].ui.modeGoals}
             </h3>
             <div className="grid md:grid-cols-3 gap-4 text-sm">
               <div className="text-indigo-200">
-                <strong>퍼즐 모드:</strong> 빠른 의사결정과 확률 직감 향상
+                {LANGUAGES[currentLanguage].ui.puzzleMode}
               </div>
               <div className="text-indigo-200">
-                <strong>기본 모드:</strong> 홀덤 룰과 핸드 랭킹 학습
+                {LANGUAGES[currentLanguage].ui.basicMode}
               </div>
               <div className="text-indigo-200">
-                <strong>고급 모드:</strong> 전략적 사고와 GTO 이론 적용
+                {LANGUAGES[currentLanguage].ui.advancedMode}
               </div>
             </div>
           </div>
@@ -3116,7 +3186,7 @@ const HoldemMaster = () => {
               </p>
               <div className="text-center">
                 <div className="inline-block bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded mb-3 font-bold">
-                  가상 칩 획득 (학습용)
+                  {LANGUAGES[currentLanguage].ui.virtualChipEarn}
                 </div>
               </div>
               <div className="flex items-center justify-center text-purple-200 group-hover:text-white transition-colors">
