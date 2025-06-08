@@ -3840,10 +3840,10 @@ const HoldemMaster = () => {
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 text-white">
                 <h3 className="font-bold mb-4 flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-yellow-400" />
-                  학습 팁
+{currentLanguage === 'ko' ? '학습 팁' : 'Learning Tips'}
                 </h3>
                 <div className="text-sm space-y-2">
-                  {selectedMode && LEARNING_MODES[selectedMode] && LEARNING_MODES[selectedMode].tips && LEARNING_MODES[selectedMode].tips.map((tip, idx) => (
+                  {selectedMode && LEARNING_MODES[selectedMode] && LEARNING_MODES[selectedMode].tips && LEARNING_MODES[selectedMode].tips[currentLanguage] && LEARNING_MODES[selectedMode].tips[currentLanguage].map((tip, idx) => (
                     <div key={idx} className="flex items-start gap-2">
                       <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
                       <span className="text-gray-300">{tip}</span>
