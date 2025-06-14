@@ -3887,6 +3887,11 @@ const HoldemMaster = () => {
         currentView={currentView}
         onViewChange={setCurrentView}
         isGameActive={currentView === 'game'}
+        onStartGame={(mode) => {
+          setSelectedMode(mode);
+          setCurrentView('game');
+          setTimeout(() => initializeGame(mode), 100);
+        }}
       />
 
       {/* 🎯 메인 컨텐츠 */}
