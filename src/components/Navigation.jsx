@@ -11,7 +11,8 @@ const Navigation = ({
   onViewChange, 
   currentLanguage = 'ko',
   LANGUAGES = {},
-  isGameActive = false 
+  isGameActive = false,
+  onStartGame = null
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -33,7 +34,7 @@ const Navigation = ({
           id: 'game',
           label: currentLanguage === 'ko' ? '게임 플레이' : 'Play Game',
           icon: Gamepad2,
-          view: 'menu', // 메뉴에서 학습 모드 선택
+          view: 'game', // 직접 게임 시작
           description: currentLanguage === 'ko' ? 'AI와 함께 실전 연습' : 'Practice with AI'
         },
         {
@@ -102,7 +103,7 @@ const Navigation = ({
     
     // 게임 플레이 클릭 시 기본 모드로 게임 시작
     if (item.id === 'game' && onStartGame) {
-      onStartGame('probability'); // 기본 모드
+      onStartGame('probability'); // 기본 모드로 게임 시작
       setIsOpen(false);
       setActiveDropdown(null);
       return;
